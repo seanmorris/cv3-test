@@ -19,10 +19,10 @@ import { Test } from 'cv3-test/Test';
 
 export class ExampleTest extends Test
 {
-	testOneSuccess()
-	{
-		this.assert(0 === 0, '0 is not equal to 0!');
-	}
+    testOneSuccess()
+    {
+        this.assert(0 === 0, '0 is not equal to 0!');
+    }
 }
 ```
 
@@ -50,21 +50,21 @@ import { Test } from 'cv3-test/Test';
 
 export class PromiseTest extends Test
 {
-	testPromise()
-	{
-		return new Promise((accept, reject)=>{
+    testPromise()
+    {
+        return new Promise((accept, reject)=>{
 
-			this.assert(0 === 0, '0 is not equal to 0!');
+            this.assert(0 === 0, '0 is not equal to 0!');
 
-			setTimeout(()=>{
+            setTimeout(()=>{
 
-				this.assert(0 === 0, '0 is not equal to 0!');
+                this.assert(0 === 0, '0 is not equal to 0!');
 
-				accept('Accepted!');
-			}, 150);
+                accept('Accepted!');
+            }, 150);
 
-		});
-	}
+        });
+    }
 }
 ```
 
