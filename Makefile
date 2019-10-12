@@ -1,7 +1,7 @@
 .PHONY: build test clean reconfigure
 
-index.js: source/*.js
-	@ npx babel source --out-dir .
+build: source/*.js
+	@ npx babel source --out-dir . \
 
 test: source/*.js  test/*.js
 	@ npx babel source test --out-dir . \

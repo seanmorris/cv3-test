@@ -3,11 +3,12 @@ import { GoodTest    } from './GoodTest';
 import { TestTest    } from './TestTest';
 import { GreyTest    } from './GreyTest';
 import { PromiseTest } from './PromiseTest';
+import { EmptyTest   }   from './EmptyTest';
 
 Test.run(
-	new GreyTest
-	, new TestTest
-	, new PromiseTest
-	, new GoodTest
+	TestTest
+	, PromiseTest
+	, GreyTest
+	, GoodTest
+	, EmptyTest
 );
-

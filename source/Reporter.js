@@ -2,7 +2,7 @@ export class Reporter
 {
 	constructor(args = {})
 	{
-		this.Print = args.Print   || console.log;
+		this.Print  = args.Print  || console.log;
 		this.Format = this.Format || ((message, type = this.NORMAL) => {
 
 			switch(type)
@@ -12,51 +12,51 @@ export class Reporter
 					break;
 
 				case this.TEST_NAME:
-					message = `\u001b[37;1m${message}\x1b[0m`;
+					message = `\x1b[22m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_NAME:
-					message = `\u001b[37;1m${message}\x1b[0m`;
+					message = `\x1b[22m${message}\x1b[0m`;
 					break;
 
 				case this.ASSERT_FAIL:
-					message = `\x1b[40m\x1b[31m${message}\x1b[0m`;
+					message = `\x1b[31m${message}\x1b[0m`;
 					break;
 
 				case this.ASSERT_WARN:
-					message = `\x1b[40m\x1b[33m${message}\x1b[0m`;
+					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_SUCCESS:
-					message = `\x1b[40m\x1b[32m${message}\x1b[0m`;
+					message = `\x1b[32m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_FAIL:
-					message = `\x1b[40m\x1b[31m${message}\x1b[0m`;
+					message = `\x1b[31m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_WARN:
-					message = `\x1b[40m\x1b[33m${message}\x1b[0m`;
+					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_SUCCESS:
-					message = `\x1b[1m\x1b[32m\x1b[40m${message}\x1b[0m`;
+					message = `\x1b[32m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_FAIL:
-					message = `\x1b[1m\x1b[31m\x1b[40m${message}\x1b[0m`;
+					message = `\x1b[31m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_WARN:
-					message = `\x1b[1m\x1b[33m\x1b[40m${message}\x1b[0m`;
+					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
 				case this.EXCEPTION:
-					message = `\x1b[40m\x1b[1m\x1b[31m${message}\x1b[0m`;
+					message = `\x1b[31m${message}\x1b[0m`;
 					break;
 
 				case this.HEADING:
-					message = `\x1b[40m\x1b[37m${message}\x1b[0m`;
+					message = `${message}\x1b[0m`;
 					break;
 			}
 			return message;
@@ -84,8 +84,10 @@ export class Reporter
 	{
 		const name = test.constructor.name;
 
+		this.testData.tests[name] = this.testData.tests[name] || {total: 0};
+
 		this.Print(this.Format(
-			`\n• Running Test: ${
+			`▼  Running Test: ${
 				this.Format(name, this.TEST_NAME)
 			}\n`
 			, this.HEADING
@@ -105,14 +107,14 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`✓ ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
+					`  ✓ ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
 					, this.TEST_SUCCESS
 				)
 			);
 			return;
 		}
 
-		let icon  = '☢️';
+		let icon  = '☢ ';
 		let color = this.TEST_WARN;
 
 		if(fail[test.ERROR] || fail[test.EXCEPTION] || fail[test.REJECTION])
@@ -121,10 +123,10 @@ export class Reporter
 			color = this.TEST_FAIL;
 		}
 
-		this.Print(this.Format(`${icon} ${total} assertation${total===1?'':'s'} in ${name}.`
-			+ `\n\t${good} Succeeded` 
+		this.Print(this.Format(`  ${icon} ${total} assertation${total===1?'':'s'} in ${name}.`
+			+ `\n     ${good} Succeeded` 
 			+ `, ${failures} Failed: `
-			+ `\n\t${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
+			+ `\n     ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
 			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
 			+ `, ${fail[test.REJECTION]} Rejection${fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${fail[test.WARN]     } Warning${fail[test.WARN]===1?'':'s'}`
@@ -136,7 +138,7 @@ export class Reporter
 	methodStarted(test, method)
 	{
 		this.Print(this.Format(
-			`\t• Method: ${
+			`  ▶  Method: ${
 				this.Format(method, this.METHOD_NAME)
 			}`
 			, this.HEADING
@@ -146,11 +148,9 @@ export class Reporter
 	methodComplete(test, method)
 	{
 		const name     = test.constructor.name;
-		const failures = test.fail.slice(1).reduce((a,b)=>a+b);
+		const failures = test.fail.slice(2).reduce((a,b)=>a+b);
 
 		this.testData.total += test.total;
-
-		this.testData.tests[name] = this.testData.tests[name] || {};
 
 		this.testData.tests[name].total     = this.testData.tests[name].total     || 0;
 		this.testData.tests[name].good      = this.testData.tests[name].good      || 0;
@@ -172,14 +172,14 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`\t✓ ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
+					`\n     ✓ ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
 					, this.METHOD_SUCCESS
 				)
 			);
 			return;
 		}
 
-		let icon  = '☢️';
+		let icon  = '☢ ';
 		let color = this.METHOD_WARN;
 
 		if(test.fail[test.ERROR] || test.fail[test.EXCEPTION] || test.fail[test.REJECTION])
@@ -188,10 +188,10 @@ export class Reporter
 			color = this.METHOD_FAIL;
 		}
 
-		this.Print(this.Format(`\t${icon} ${test.total} assertation${test.total===1?'':'s'} in ${method}.`
-			+ `\n\t\t${test.good} Succeeded` 
+		this.Print(this.Format(`\n     ${icon} ${test.total} assertation${test.total===1?'':'s'} in ${method}.`
+			+ `\n        ${test.good} Succeeded` 
 			+ `, ${failures} Failed: `
-			+ `\n\t\t${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
+			+ `\n        ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
 			+ `, ${test.fail[test.EXCEPTION]} Exception${test.fail[test.EXCEPTION]===1?'':'s'}`
 			+ `, ${test.fail[test.REJECTION]} Rejection${test.fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${test.fail[test.WARN]     } Warning${test.fail[test.WARN]===1?'':'s'}`
@@ -210,23 +210,23 @@ export class Reporter
 		let icon   = '💀';
 		let color = this.ASSERT_FAIL;
 
-		if(level > 1)
+		if(level > 2)
 		{
-			icon = '☢️';
+			icon = '☢ ';
 			color = this.ASSERT_WARN;
 		}
 
 		this.Print(
-			this.Format(`\t${icon} ${errorMessage}`, color)
+			this.Format(`     ${icon} ${errorMessage}`, color)
 		);
 	}
 
 	exceptionCaught(exception)
 	{
 		this.Print(
-			"\t" + this.Format(
-				'💀' + exception.stack.toString()
-					.replace(/\n\s+/g, "\n\t\t")
+			"     " + this.Format(
+				'💀 ' + exception.stack.toString()
+					.replace(/\n\s+/g, "\n        ")
 				, this.EXCEPTION
 			) + "\n"
 		);
@@ -234,6 +234,6 @@ export class Reporter
 
 	promiseRejected(rejectionMessage)
 	{
-		this.Print("\t" + this.Format('💀' + rejectionMessage, this.EXCEPTION) + "\n");
+		this.Print("     " + this.Format('💀 ' + rejectionMessage, this.EXCEPTION) + "\n");
 	}
 }

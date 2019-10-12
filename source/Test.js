@@ -9,18 +9,24 @@ export class Test
 			return;
 		}
 
-		let step = tests.shift();
+		let test = tests.shift();
 
-		if(step instanceof Test)
+		if(Test.isPrototypeOf(test))
 		{
-			step = step.run() || Promise.resolve();
+			test = new test;
 		}
 
-		step.then(() => {
+		if(test instanceof Test)
+		{
+			test = test.run();
+		}
 
-			this.run(...tests);
+		if(!test)
+		{
+			test = Promise.resolve(test);
+		}
 
-		});
+		test.then(() => { this.run(...tests) });
 	}
 
 	constructor(args = {})
@@ -34,7 +40,7 @@ export class Test
 		this.error = 0;
 		this.fail  = [];
 
-		['EXCEPTION', 'ERROR', 'WARN', 'NOTICE', 'REJECTION'].map((level, index)=>{
+		['REJECTION', 'EXCEPTION', 'ERROR', 'WARN', 'NOTICE'].map((level, index)=>{
 
 			this.fail[index] = 0;
 
