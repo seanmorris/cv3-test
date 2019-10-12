@@ -28,7 +28,7 @@ export class Reporter
 					break;
 
 				case this.ASSERT_NOTICE:
-					message = `\x1b[0m${message}\x1b[0m`;
+					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_SUCCESS:
@@ -44,7 +44,7 @@ export class Reporter
 					break;
 
 				case this.METHOD_NOTICE:
-					message = `\x1b[0m${message}\x1b[0m`;
+					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_SUCCESS:
@@ -56,6 +56,10 @@ export class Reporter
 					break;
 
 				case this.TEST_WARN:
+					message = `\x1b[33m${message}\x1b[0m`;
+					break;
+
+				case this.TEST_NOTICE:
 					message = `\x1b[33m${message}\x1b[0m`;
 					break;
 
@@ -73,7 +77,7 @@ export class Reporter
 		this.testData = {total:0, tests:{}, totals: {}};
 
 		[
-			'NORMAL', 'TEST_NAME', 'TEST_SUCCESS', 'TEST_FAIL', 'TEST_WARN'
+			'NORMAL', 'TEST_NAME', 'TEST_SUCCESS', 'TEST_FAIL', 'TEST_NOTICE', 'TEST_WARN'
 			, 'METHOD_NAME', 'METHOD_SUCCESS', 'METHOD_FAIL', 'METHOD_NOTICE', 'METHOD_WARN'
 			, 'ASSERT_FAIL', 'ASSERT_WARN', 'ASSERT_NOTICE', 'EXCEPTION', 'HEADING'
 		].map((level, index)=>{
@@ -110,12 +114,12 @@ export class Reporter
 		const packageInfo = require('./package.json');
 
 		this.box(47
-			, `Curvature 3 Testing Framework`
+			, `Curvature 3 Testing Framework ${packageInfo.version}`
 			, `© 2019 Sean Morris`
 			, ``
-			, `seanmorris/${packageInfo.name}:${packageInfo.version}`
 			, `https://www.npmjs.com/package/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
+			, `seanmorris/${packageInfo.name}:${packageInfo.version}`
 		);
 
 		this.Print(`------------- ☯  Starting test ☯  -------------\n`);
@@ -136,8 +140,6 @@ export class Reporter
 			t=>this.filterFails(t.fail,[4])
 				.reduce((a,b)=>a+b)
 		).filter(x=>x).length;
-
-		this.Print(`-----------------------------------------------\n`);
 
 		let icon = badTests ? '💀' : ' ✓';
 
@@ -197,10 +199,10 @@ export class Reporter
 			let icon  = ' ✓';
 			let color = this.TEST_SUCCESS;
 
-			if(fail[test.NOTICE])
+			if(fail[test.NOTICE] || !test.good)
 			{
 				icon  = ' -';
-				color = this.TEST_WARN;
+				color = this.TEST_NOTICE;
 			}
 
 			this.Print(
@@ -229,8 +231,9 @@ export class Reporter
 			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}`
 			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
 			+ `, ${fail[test.REJECTION]} Rejection${fail[test.REJECTION]===1?'':'s'}.`
-			+ `\n`
 		, color));
+
+		this.Print(`\n-----------------------------------------------\n`);
 	}
 
 	methodStarted(test, method)
@@ -275,10 +278,19 @@ export class Reporter
 
 		if(!hardFails && !test.fail[test.EXCEPTION])
 		{
+			let icon  = '✓';
+			let color = this.METHOD_SUCCESS;
+
+			if(!test.good)
+			{
+				icon = '-';
+				color = this.METHOD_NOTICE;
+			}
+
 			this.Print(
 				this.Format(
-					`\n     ✓  ${test.good} successful assertation${test.good===1?'':'s'} in ${method}.\n`
-					, failures ? this.METHOD_NOTICE : this.METHOD_SUCCESS
+					`\n     ${icon}  ${test.good} successful assertation${test.good===1?'':'s'} in ${method}.\n`
+					, color
 				)
 			);
 			return;
@@ -333,7 +345,7 @@ export class Reporter
 		}
 
 		this.Print(
-			this.Format(`     ${icon} ${errorMessage}`, color)
+			this.Format(`     ${icon} ${errorMessage.replace(/\n/g, "\n        ")}`, color)
 		);
 	}
 

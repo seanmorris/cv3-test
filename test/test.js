@@ -9,9 +9,9 @@ import { NoticeTest  } from './NoticeTest';
 
 Test.run(
 	TestTest
+	, EmptyTest
 	, GreyTest
 	, GoodTest
-	, EmptyTest
 	, NoticeTest
 	, WarningTest
 	, PromiseTest
