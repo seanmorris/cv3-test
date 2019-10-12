@@ -4,11 +4,15 @@ import { TestTest    } from './TestTest';
 import { GreyTest    } from './GreyTest';
 import { PromiseTest } from './PromiseTest';
 import { EmptyTest   } from './EmptyTest';
+import { WarningTest } from './WarningTest';
+import { NoticeTest  } from './NoticeTest';
 
 Test.run(
-	GreyTest
+	TestTest
+	, GreyTest
 	, GoodTest
 	, EmptyTest
+	, NoticeTest
+	, WarningTest
 	, PromiseTest
-	, TestTest
 );
