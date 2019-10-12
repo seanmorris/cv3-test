@@ -64,8 +64,6 @@ export class Reporter
 
 		this.testData      = {total:0, tests:{}, totals: {}};
 
-		this.ansiColor     = true;
-
 		[
 			'NORMAL', 'TEST_NAME', 'TEST_SUCCESS', 'TEST_FAIL', 'TEST_WARN'
 			, 'METHOD_NAME', 'METHOD_SUCCESS', 'METHOD_FAIL', 'METHOD_WARN'
@@ -78,6 +76,48 @@ export class Reporter
 				value:      index
 			});
 		});
+	}
+
+	suiteStarted()
+	{
+		this.Print(`------------- Starting test -------------\n`);
+	}
+
+	suiteComplete()
+	{
+		// const sum = (object, name) => {
+		// 	return object.reduce((a,b) => {
+		// 		return a+(b[name]||0);
+		// 	}, 0);
+		// };
+
+		const tests = Object.values(this.testData.tests);
+
+		const totalTests = tests.length;
+		const goodTests  = tests.filter(t=>!t.failures).length;
+		const badTests   = tests.filter(t=>t.failures).length;
+
+		// const totalAssert    = sum(tests, 'total');
+		// const goodAssert     = sum(tests, 'good');
+		// const failedAssert   = sum(tests, 'failures');
+
+		this.Print(`----------- Testing completed -----------\n`);
+
+		let icon = badTests ? '💀' : ' ✓';
+
+		this.Print(this.Format(`${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
+			+ `\n   ${goodTests} Passed.` 
+			+ `\n   ${badTests} Failed.`
+			// + `\n   ${totalAssert} assertation${totalAssert===1?'':'s'}`
+			// + `\n     ${goodAssert} Succeeded` 
+			// + `, ${failedAssert} Failed`
+			+ `\n`
+		, badTests ? this.TEST_FAIL : this.TEST_SUCCESS));
+
+		if(process !== undefined)
+		{
+			process.exitCode = !!badTests;
+		}
 	}
 
 	testStarted(test)
@@ -107,7 +147,7 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`  ✓  ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
+					`   ✓ ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
 					, this.TEST_SUCCESS
 				)
 			);
@@ -172,7 +212,7 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`\n     ✓  ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
+					`\n     ✓ ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
 					, this.METHOD_SUCCESS
 				)
 			);

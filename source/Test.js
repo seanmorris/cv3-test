@@ -1,24 +1,37 @@
 import { Reporter } from './Reporter';
 
+const recurse = Symbol('recurse');
+
 export class Test
 {
 	static run(...tests)
 	{
+		this.reporter = new Reporter;
+
+		this.reporter.suiteStarted();
+
+		return this[recurse](...tests).finally(()=>{
+			this.reporter.suiteComplete();
+		});
+	}
+
+	static [recurse](...tests)
+	{
 		if(!tests.length)
 		{
-			return;
+			return Promise.resolve();
 		}
 
 		let test = tests.shift();
 
 		if(Test.isPrototypeOf(test))
 		{
-			test = new test;
+			test = new test({reporter: this.reporter});
 		}
 
 		if(test instanceof Test)
 		{
-			test = test.run();
+			test = test.run(this.reporter);
 		}
 
 		if(!test)
@@ -26,14 +39,12 @@ export class Test
 			test = Promise.resolve(test);
 		}
 
-		test.then(() => { this.run(...tests) });
+		return test.finally(() => { return this[recurse](...tests) });
 	}
 
 	constructor(args = {})
 	{
-		this.reporter = this.reporter || args.reporter || new Reporter;
-
-		this.Name  = this.Name  || 'BaseTest';
+		this.reporter = args.reporter;
 
 		this.total = 0;
 		this.good  = 0;
@@ -85,7 +96,7 @@ export class Test
 
 	}
 
-	run()
+	run(reporter)
 	{
 		const testMethods = [];
 		const constructor = this.constructor;
@@ -101,7 +112,7 @@ export class Test
 			}));
 		}
 
-		this.reporter.testStarted(this);
+		reporter.testStarted(this);
 
 		const runMethods = (...methods) => {
 
@@ -111,11 +122,11 @@ export class Test
 			}
 
 			const method = methods.shift();
-			const test   = new constructor;
+			const test   = new constructor({reporter});
 
 			test.setUp();
 
-			this.reporter.methodStarted(test, method);
+			reporter.methodStarted(test, method);
 
 			try
 			{
@@ -125,7 +136,7 @@ export class Test
 				{
 					return result.catch((error)=>{
 
-						this.reporter.promiseRejected(error);
+						reporter.promiseRejected(error);
 
 						test.fail[test.REJECTION]++;
 
@@ -133,7 +144,7 @@ export class Test
 
 						test.breakDown();
 
-						this.reporter.methodComplete(test, method);
+						reporter.methodComplete(test, method);
 
 						return runMethods(...methods)
 
@@ -142,20 +153,20 @@ export class Test
 			}
 			catch(exception)
 			{
-				this.reporter.exceptionCaught(exception);
+				reporter.exceptionCaught(exception);
 
 				test.fail[test.EXCEPTION]++;
 			}
 
 			test.breakDown();
 
-			this.reporter.methodComplete(test, method);
+			reporter.methodComplete(test, method);
 
 			return runMethods(...methods);
 		};
 
 		return runMethods(...testMethods).finally(()=>{
-			this.reporter.testComplete(this);
+			reporter.testComplete(this);
 		});
 	}
 }
