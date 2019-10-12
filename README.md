@@ -2,6 +2,8 @@
 
 Simple testing for ES6.
 
+![screenshot](https://raw.githubusercontent.com/seanmorris/cv3-test/master/screenshot.png)
+
 ## Install
 
 ```bash

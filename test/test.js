@@ -5,10 +5,4 @@ import { GreyTest    } from './GreyTest';
 import { PromiseTest } from './PromiseTest';
 import { EmptyTest   } from './EmptyTest';
 
-Test.run(
-	GreyTest
-	, GoodTest
-	, EmptyTest
-	, PromiseTest
-	, TestTest
-);
+Test.run(TestTest);
