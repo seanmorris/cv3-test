@@ -78,9 +78,39 @@ export class Reporter
 		});
 	}
 
+	box(width, ...lines)
+	{
+		this.Print('');
+		this.Print('#'.repeat(width));
+		this.Print('#', ' '.repeat(width - 4), '#');
+
+		lines.map((line) => {
+			
+			const padding    = (width - line.length) - 5;
+			const whitespace = padding > 0 ? ' '.repeat(padding) : '';
+
+			this.Print('#', line, whitespace, '#')
+		});
+
+		this.Print('#', ' '.repeat(width - 4), '#');
+		this.Print('#'.repeat(width));
+		this.Print('');
+	};
+
 	suiteStarted()
 	{
-		this.Print(`------------- Starting test -------------\n`);
+		const packageInfo = require('./package.json');
+
+		this.box(47
+			, `Curvature 3 Testing Framework`
+			, `© 2019 Sean Morris`
+			, ``
+			, `seanmorris/${packageInfo.name}:${packageInfo.version}`
+			, `https://www.npmjs.com/package/cv3-test`
+			, `https://github.com/seanmorris/cv3-test`
+		);
+
+		this.Print(`------------- ☯  Starting test ☯  -------------\n`);
 	}
 
 	suiteComplete()
@@ -101,23 +131,30 @@ export class Reporter
 		// const goodAssert     = sum(tests, 'good');
 		// const failedAssert   = sum(tests, 'failures');
 
-		this.Print(`----------- Testing completed -----------\n`);
+		this.Print(`-----------------------------------------------\n`);
 
 		let icon = badTests ? '💀' : ' ✓';
 
-		this.Print(this.Format(`${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
-			+ `\n   ${goodTests} Passed.` 
-			+ `\n   ${badTests} Failed.`
-			// + `\n   ${totalAssert} assertation${totalAssert===1?'':'s'}`
-			// + `\n     ${goodAssert} Succeeded` 
-			// + `, ${failedAssert} Failed`
-			+ `\n`
-		, badTests ? this.TEST_FAIL : this.TEST_SUCCESS));
+		// + `\n   ${totalAssert} assertation${totalAssert===1?'':'s'}`
+		// + `\n     ${goodAssert} Succeeded` 
+		// + `, ${failedAssert} Failed`
+
+		const message = this.Format(
+			` ${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
+				+ `\n    ${goodTests} Passed.` 
+				+ `\n    ${badTests} Failed.`
+				+ `\n`
+			, badTests ? this.TEST_FAIL : this.TEST_SUCCESS
+		);
+
+		this.Print(message);
 
 		if(process !== undefined)
 		{
 			process.exitCode = !!badTests;
 		}
+
+		this.Print(`----------- ☯  Testing completed ☯  -----------`);
 	}
 
 	testStarted(test)
@@ -167,10 +204,10 @@ export class Reporter
 			+ `\n     ${good} Succeeded` 
 			+ `, ${failures} Failed: `
 			+ `\n     ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
-			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
-			+ `, ${fail[test.REJECTION]} Rejection${fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${fail[test.WARN]     } Warning${fail[test.WARN]===1?'':'s'}`
-			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}.`
+			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}`
+			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
+			+ `, ${fail[test.REJECTION]} Rejection${fail[test.REJECTION]===1?'':'s'}.`
 			+ `\n`
 		, color));
 	}
@@ -232,10 +269,10 @@ export class Reporter
 			+ `\n        ${test.good} Succeeded` 
 			+ `, ${failures} Failed: `
 			+ `\n        ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
-			+ `, ${test.fail[test.EXCEPTION]} Exception${test.fail[test.EXCEPTION]===1?'':'s'}`
-			+ `, ${test.fail[test.REJECTION]} Rejection${test.fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${test.fail[test.WARN]     } Warning${test.fail[test.WARN]===1?'':'s'}`
-			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}.`
+			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}`
+			+ `, ${test.fail[test.EXCEPTION]} Exception${test.fail[test.EXCEPTION]===1?'':'s'}`
+			+ `, ${test.fail[test.REJECTION]} Rejection${test.fail[test.REJECTION]===1?'':'s'}.`
 			+ `\n`
 		, color));
 	}
@@ -256,9 +293,10 @@ export class Reporter
 			color = this.ASSERT_WARN;
 		}
 
-		this.Print(
-			this.Format(`     ${icon} ${errorMessage}`, color)
-		);
+		this.Print(this.Format(
+			`     ${icon} ${errorMessage.replace(/\n/g, "\n        ")}`
+			, color
+		));
 	}
 
 	exceptionCaught(exception)
@@ -266,7 +304,8 @@ export class Reporter
 		this.Print(
 			"     " + this.Format(
 				'💀 ' + exception.stack.toString()
-					.replace(/\n\s+/g, "\n        ")
+					.replace(/\n\s+/g, "\n          ")
+					.replace(/\n\b/g, "\n        ")
 				, this.EXCEPTION
 			)
 		);
@@ -274,6 +313,9 @@ export class Reporter
 
 	promiseRejected(rejectionMessage)
 	{
-		this.Print("     " + this.Format('💀 ' + rejectionMessage, this.EXCEPTION));
+		this.Print("     " + this.Format('💀 '
+			+ rejectionMessage.replace(/\n/g, "\n        ")
+			, this.EXCEPTION)
+		);
 	}
 }
