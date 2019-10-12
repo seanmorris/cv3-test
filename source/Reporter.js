@@ -199,7 +199,7 @@ export class Reporter
 			let icon  = ' ✓';
 			let color = this.TEST_SUCCESS;
 
-			if(fail[test.NOTICE] || !test.good)
+			if(fail[test.NOTICE] || !good)
 			{
 				icon  = ' -';
 				color = this.TEST_NOTICE;
@@ -207,10 +207,13 @@ export class Reporter
 
 			this.Print(
 				this.Format(
-					`  ${icon} ${good} successful assertation${good===1?'':'s'} in ${name}.\n`
+					`  ${icon} ${good}/${total} successful assertation${good===1?'':'s'} in ${name}.\n`
 					, color
 				)
 			);
+
+			this.Print(`-----------------------------------------------\n`);
+
 			return;
 		}
 
@@ -281,7 +284,7 @@ export class Reporter
 			let icon  = '✓';
 			let color = this.METHOD_SUCCESS;
 
-			if(!test.good)
+			if(test.fail[test.NOTICE])
 			{
 				icon = '-';
 				color = this.METHOD_NOTICE;
@@ -289,7 +292,7 @@ export class Reporter
 
 			this.Print(
 				this.Format(
-					`\n     ${icon}  ${test.good} successful assertation${test.good===1?'':'s'} in ${method}.\n`
+					`\n     ${icon}  ${test.good}/${test.total} successful assertation${test.good===1?'':'s'} in ${method}.\n`
 					, color
 				)
 			);
