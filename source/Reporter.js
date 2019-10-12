@@ -2,7 +2,7 @@ export class Reporter
 {
 	constructor(args = {})
 	{
-		this.Print  = args.Print  || console.log;
+		this.Print  = args.Print  || console.error;
 		this.Format = this.Format || ((message, type = this.NORMAL) => {
 
 			switch(type)
@@ -170,7 +170,7 @@ export class Reporter
 			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
 			+ `, ${fail[test.REJECTION]} Rejection${fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${fail[test.WARN]     } Warning${fail[test.WARN]===1?'':'s'}`
-			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}`
+			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}.`
 			+ `\n`
 		, color));
 	}
@@ -235,7 +235,7 @@ export class Reporter
 			+ `, ${test.fail[test.EXCEPTION]} Exception${test.fail[test.EXCEPTION]===1?'':'s'}`
 			+ `, ${test.fail[test.REJECTION]} Rejection${test.fail[test.REJECTION]===1?'':'s'}`
 			+ `, ${test.fail[test.WARN]     } Warning${test.fail[test.WARN]===1?'':'s'}`
-			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}`
+			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}.`
 			+ `\n`
 		, color));
 	}
