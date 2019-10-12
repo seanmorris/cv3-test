@@ -13,4 +13,6 @@ Test.run(
 	, GoodTest
 	, NoticeTest
 	, WarningTest
+	, TestTest
+	, PromiseTest
 );
