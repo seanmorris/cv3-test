@@ -228,12 +228,12 @@ export class Reporter
 				'💀 ' + exception.stack.toString()
 					.replace(/\n\s+/g, "\n        ")
 				, this.EXCEPTION
-			) + "\n"
+			)
 		);
 	}
 
 	promiseRejected(rejectionMessage)
 	{
-		this.Print("     " + this.Format('💀 ' + rejectionMessage, this.EXCEPTION) + "\n");
+		this.Print("     " + this.Format('💀 ' + rejectionMessage, this.EXCEPTION));
 	}
 }
