@@ -107,7 +107,7 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`  ✓ ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
+					`  ✓  ${total} successful assertation${total===1?'':'s'} in ${name}.\n`
 					, this.TEST_SUCCESS
 				)
 			);
@@ -172,7 +172,7 @@ export class Reporter
 		{
 			this.Print(
 				this.Format(
-					`\n     ✓ ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
+					`\n     ✓  ${test.total} successful assertation${test.total===1?'':'s'} in ${method}.\n`
 					, this.METHOD_SUCCESS
 				)
 			);
