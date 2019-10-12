@@ -8,11 +8,9 @@ import { WarningTest } from './WarningTest';
 import { NoticeTest  } from './NoticeTest';
 
 Test.run(
-	TestTest
-	, EmptyTest
+	EmptyTest
 	, GreyTest
 	, GoodTest
 	, NoticeTest
 	, WarningTest
-	, PromiseTest
 );
