@@ -74,6 +74,6 @@ export class PromiseTest extends Test
 
 ## License 
 
-cv3-inject &copy; Sean Morris 2019
+cv3-test &copy; Sean Morris 2019
 
 All code in this package is relased under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) licence.
