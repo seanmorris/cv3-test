@@ -1,8 +1,10 @@
+![avatar](https://avatars3.githubusercontent.com/u/640101?s=80&v=4)
+
 # cv3-test
 
 Simple testing for ES6.
 
-![cv3-test](https://img.shields.io/badge/cv3-test-darkred?style=for-the-badge) ![Version Badge](https://img.shields.io/npm/v/cv3-test?label=ver&style=for-the-badge) ![Downloads Badge](https://img.shields.io/npm/dm/cv3-test?color=338800&style=for-the-badge) ![Size badge](https://img.shields.io/github/languages/code-size/seanmorris/cv3-test?style=for-the-badge) ![Apache-2.0 Licence Badge](https://img.shields.io/npm/l/cv3-test?color=338800&style=for-the-badge)
+[![cv3-test](https://img.shields.io/badge/cv3-test-darkred?style=for-the-badge)](https://github.com/seanmorris/cv3-test) [![Version Badge](https://img.shields.io/npm/v/cv3-test?label=ver&style=for-the-badge)](https://www.npmjs.com/package/cv3-test) [![Downloads Badge](https://img.shields.io/npm/dm/cv3-test?color=338800&style=for-the-badge)](https://www.npmjs.com/package/cv3-test) [![github](https://img.shields.io/badge/github-cv3--test-informational?style=for-the-badge)](https://github.com/seanmorris/cv3-test) [![github](https://img.shields.io/badge/npm-cv3--test-informational?style=for-the-badge&color=darkgreen)](https://www.npmjs.com/package/cv3-test) [![Size badge](https://img.shields.io/github/languages/code-size/seanmorris/cv3-test?style=for-the-badge)](https://www.npmjs.com/package/cv3-test) [![Apache-2.0 Licence Badge](https://img.shields.io/npm/l/cv3-test?color=338800&style=for-the-badge)](https://raw.githubusercontent.com/seanmorris/cv3-test/master/LICENSE)
 
 ![screenshot](https://raw.githubusercontent.com/seanmorris/cv3-test/master/screenshot.png)
 
@@ -74,6 +76,6 @@ export class PromiseTest extends Test
 
 ## License 
 
-cv3-inject &copy; Sean Morris 2019
+cv3-test &copy; Sean Morris 2019
 
 All code in this package is relased under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) licence.
