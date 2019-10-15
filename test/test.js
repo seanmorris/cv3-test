@@ -6,6 +6,7 @@ import { PromiseTest } from './PromiseTest';
 import { EmptyTest   } from './EmptyTest';
 import { WarningTest } from './WarningTest';
 import { NoticeTest  } from './NoticeTest';
+import { ExceptionTest  } from './ExceptionTest';
 
 Test.run(
 	EmptyTest
@@ -15,4 +16,5 @@ Test.run(
 	, WarningTest
 	, TestTest
 	, PromiseTest
+	, ExceptionTest
 );

@@ -6,6 +6,8 @@ export class Test
 {
 	static run(...tests)
 	{
+		this.expected = false;
+
 		this.reporter = new Reporter;
 
 		this.reporter.suiteStarted();
@@ -86,6 +88,16 @@ export class Test
 		this.reporter.assertationFailed(errorMessage, level);
 	}
 
+	expect(errorType)
+	{
+		this.expected = errorType;
+		if(!Error.isPrototypeOf(errorType))
+		{
+			
+		}
+
+	}
+
 	setUp()
 	{
 
@@ -153,9 +165,16 @@ export class Test
 			}
 			catch(exception)
 			{
-				reporter.exceptionCaught(exception);
+				if(test.expected !== exception.constructor)
+				{
+					reporter.exceptionCaught(exception);
 
-				test.fail[test.EXCEPTION]++;
+					test.fail[test.EXCEPTION]++;
+				}
+				else
+				{
+					test.assert(true);
+				}
 			}
 
 			test.breakDown();
