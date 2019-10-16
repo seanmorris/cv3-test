@@ -88,14 +88,42 @@ export class Test
 		this.reporter.assertationFailed(errorMessage, level);
 	}
 
-	expect(errorType)
+	expect(errorType, callback = null)
 	{
-		this.expected = errorType;
 		if(!Error.isPrototypeOf(errorType))
 		{
 			
 		}
 
+		if(callback)
+		{
+			try
+			{
+				callback();
+			}
+			catch(error)
+			{
+				if(error instanceof errorType)
+				{
+					this.assert(true);
+					return;
+				}
+				else
+				{
+					throw error;
+				}
+			}
+			
+			this.assert(
+				false
+				, `Unmet error expectation, Expected ${errorType.name}.`
+			);
+
+
+			return;
+		}
+
+		this.expected = errorType;
 	}
 
 	setUp()
@@ -140,42 +168,54 @@ export class Test
 
 			reporter.methodStarted(test, method);
 
-			try
-			{
+			return (new Promise((accept, reject)=>{
+
 				let result = test[method]();
 
-				if(result instanceof Promise)
+				if(!(result instanceof Promise))
 				{
-					return result.catch((error)=>{
-
-						reporter.promiseRejected(error);
-
-						test.fail[test.REJECTION]++;
-
-					}).finally(()=>{
-
-						test.breakDown();
-
-						reporter.methodComplete(test, method);
-
-						return runMethods(...methods)
-
-					});
+					result = Promise.resolve(result);
 				}
-			}
-			catch(exception)
-			{
-				if(test.expected !== exception.constructor)
-				{
-					reporter.exceptionCaught(exception);
 
-					test.fail[test.EXCEPTION]++;
+				result.then(accept).catch(reject);
+
+			})).then(()=>{
+
+				if(test.expected)
+				{
+					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
+				}
+
+			}).catch((error)=>{
+				if(error instanceof Error)
+				{
+					if(test.expected && error instanceof test.expected)
+					{
+						test.assert(true);
+					}
+					else
+					{
+						reporter.exceptionCaught(error);
+						test.fail[test.EXCEPTION]++;
+					}
+					
 				}
 				else
 				{
-					test.assert(true);
+					reporter.promiseRejected(error);
+
+					test.fail[test.REJECTION]++;
 				}
-			}
+
+			}).finally(()=>{
+
+				test.breakDown();
+
+				reporter.methodComplete(test, method);
+
+				return runMethods(...methods)
+
+			});
 
 			test.breakDown();
 

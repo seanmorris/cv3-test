@@ -364,10 +364,17 @@ export class Reporter
 		);
 	}
 
-	promiseRejected(rejectionMessage)
+	promiseRejected(rejection)
 	{
+		let message = rejection;
+
+		if(rejection instanceof Error)
+		{
+			message = rejection.message;
+		}
+
 		this.Print("     " + this.Format('💀 '
-			+ rejectionMessage.replace(/\n/g, "\n        ")
+			+ message.replace(/\n/g, "\n        ")
 			, this.EXCEPTION)
 		);
 	}
