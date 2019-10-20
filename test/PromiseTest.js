@@ -38,6 +38,24 @@ export class PromiseTest extends Test
 		});
 	}
 
+	testBadEmptyPromise()
+	{
+		return new Promise((accept, reject)=>{
+
+			this.assert(0 === 1, '0 is not equal to 1!');
+
+			setTimeout(()=>{
+
+				this.assert(0 === 1, '0 is not equal to 1!');
+
+				this.assert(0 === 1, '0 is not equal to 1!');
+
+				reject();
+			}, 1500);
+
+		});
+	}
+
 	testAnotherBadPromise()
 	{
 		return new Promise((accept, reject)=>{

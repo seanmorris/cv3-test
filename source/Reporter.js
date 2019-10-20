@@ -378,7 +378,7 @@ export class Reporter extends (class{})
 		}
 
 		this.Print("     " + this.Format('💀 '
-			+ message.replace(/\n/g, "\n        ")
+			+ (message || '').replace(/\n/g, "\n        ")
 			, this.EXCEPTION)
 		);
 	}
