@@ -8,7 +8,7 @@ export class Test
 	{
 		this.expected = false;
 
-		this.reporter = new Reporter;
+		this.reporter = new (this.Reporter || Reporter);
 
 		this.reporter.suiteStarted();
 

@@ -1,8 +1,11 @@
-export class Reporter
+export class Reporter extends (class{})
 {
-	constructor(args = {})
+	constructor(args)
 	{
-		this.Print  = args.Print  || console.error;
+		super(args);
+
+		this.Print  = this.Print  || console.error;
+
 		this.Format = this.Format || ((message, type = this.NORMAL) => {
 
 			switch(type)
@@ -71,6 +74,7 @@ export class Reporter
 					message = `${message}\x1b[0m`;
 					break;
 			}
+
 			return message;
 		});
 
