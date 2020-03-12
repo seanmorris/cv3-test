@@ -24,18 +24,9 @@ export class Test
 			return Promise.resolve();
 		}
 
-		let test = tests.shift();
-		let testResult;
-
-		if(Test.isPrototypeOf(test))
-		{
-			test = new test({reporter: this.reporter});
-		}
-
-		if(test instanceof Test)
-		{
-			testResult = test.run(this.reporter);
-		}
+		const testClass = tests.shift();
+		const test      = new test({reporter: this.reporter});
+		let testResult  = test.run(this.reporter);
 
 		if(!testResult)
 		{
