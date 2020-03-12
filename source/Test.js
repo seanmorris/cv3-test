@@ -25,7 +25,7 @@ export class Test
 		}
 
 		const testClass = tests.shift();
-		const test      = new test({reporter: this.reporter});
+		const test      = new testClass({reporter: this.reporter});
 		let testResult  = test.run(this.reporter);
 
 		if(!testResult)
