@@ -34,6 +34,22 @@ export class ExampleTest extends Test
 
 ## Running Tests
 
+### CLI
+
+Install the package globally to use the `cvtest` command:
+
+```bash
+$ npm install -g cv3-test
+```
+
+Run the `cvtest` command in any directory to automatically scan for files ending in `...Test.js` (case sensitive). Any files found will be included and the system will look for tests in the class with same name as the file it resides in (minus the `.js` extension).
+
+```bash
+$ cvtest
+```
+
+### Javascript
+
 Use the static `run` function on the `Test` class to execute your tests. Just pass the test classes you want to run as parameters.
 
 ```javascript
@@ -76,6 +92,6 @@ export class PromiseTest extends Test
 
 ## License 
 
-cv3-test &copy; Sean Morris 2019
+cv3-test &copy; Sean Morris 2019 - 2020
 
 All code in this package is relased under the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) licence.
