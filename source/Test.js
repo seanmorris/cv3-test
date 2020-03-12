@@ -25,6 +25,7 @@ export class Test
 		}
 
 		let test = tests.shift();
+		let testResult;
 
 		if(Test.isPrototypeOf(test))
 		{
@@ -33,15 +34,15 @@ export class Test
 
 		if(test instanceof Test)
 		{
-			test = test.run(this.reporter);
+			testResult = test.run(this.reporter);
 		}
 
-		if(!test)
+		if(!testResult)
 		{
-			test = Promise.resolve(test);
+			testResult = Promise.resolve(testResult);
 		}
 
-		return test.finally(() => { return this[recurse](...tests) });
+		return testResult.finally(() => { return this[recurse](...tests) });
 	}
 
 	constructor(args = {})
@@ -128,12 +129,12 @@ export class Test
 
 	setUp()
 	{
-
+		return Promise.resolve();
 	}
 
 	breakDown()
 	{
-
+		return Promise.resolve();
 	}
 
 	run(reporter)
@@ -164,11 +165,9 @@ export class Test
 			const method = methods.shift();
 			const test   = new constructor({reporter});
 
-			test.setUp();
-
 			reporter.methodStarted(test, method);
 
-			return (new Promise((accept, reject)=>{
+			return test.setUp().then(() => new Promise((accept, reject)=>{
 
 				let result = test[method]();
 
@@ -177,7 +176,7 @@ export class Test
 					result = Promise.resolve(result);
 				}
 
-				result.then(accept).catch(reject);
+				return result.then(accept).catch(reject);
 
 			})).then(()=>{
 
@@ -185,6 +184,8 @@ export class Test
 				{
 					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
 				}
+
+				return test.breakDown();
 
 			}).catch((error)=>{
 				if(error instanceof Error)
@@ -209,17 +210,15 @@ export class Test
 
 			}).finally(()=>{
 
-				test.breakDown();
-
 				reporter.methodComplete(test, method);
 
-				return runMethods(...methods)
+				return runMethods(...methods);
 
 			});
 
-			test.breakDown();
+			// test.breakDown();
 
-			reporter.methodComplete(test, method);
+			// reporter.methodComplete(test, method);
 
 			return runMethods(...methods);
 		};

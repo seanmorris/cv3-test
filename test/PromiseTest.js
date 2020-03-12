@@ -33,7 +33,7 @@ export class PromiseTest extends Test
 				this.assert(0 === 1, '0 is not equal to 1!');
 
 				reject('Rejection message here!');
-			}, 1500);
+			}, 150);
 
 		});
 	}
@@ -51,7 +51,7 @@ export class PromiseTest extends Test
 				this.assert(0 === 1, '0 is not equal to 1!');
 
 				reject();
-			}, 1500);
+			}, 150);
 
 		});
 	}

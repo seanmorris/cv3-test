@@ -27,7 +27,7 @@ export class Reporter extends (class{})
 					break;
 
 				case this.ASSERT_WARN:
-					message = `\x1b[33m${message}\x1b[0m`;
+					message = `\x1b[38;5:227m${message}\x1b[0m`;
 					break;
 
 				case this.ASSERT_NOTICE:
@@ -43,7 +43,7 @@ export class Reporter extends (class{})
 					break;
 
 				case this.METHOD_WARN:
-					message = `\x1b[33m${message}\x1b[0m`;
+					message = `\x1b[38;5:227m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_NOTICE:
@@ -55,7 +55,7 @@ export class Reporter extends (class{})
 					break;
 
 				case this.TEST_FAIL:
-					message = `\x1b[31m${message}\x1b[0m`;
+					message = `\x1b[38:2:255:0:0m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_WARN:
@@ -119,7 +119,7 @@ export class Reporter extends (class{})
 
 		this.box(47
 			, `Curvature 3 Testing Framework ${packageInfo.version}`
-			, `© 2019 Sean Morris`
+			, `© 2019-2020 Sean Morris`
 			, ``
 			, `https://www.npmjs.com/package/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
