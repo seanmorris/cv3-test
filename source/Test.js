@@ -150,8 +150,6 @@ export class Test
 			}));
 		}
 
-		const test = new constructor({reporter});
-
 		const runMethods = (...methods) => {
 
 			if(!methods.length)
@@ -160,6 +158,8 @@ export class Test
 			}
 
 			reporter.testStarted(this);
+
+			const test = new constructor({reporter});
 
 			const method = methods.shift();
 			const setUp = test.setUp();
@@ -215,7 +215,7 @@ export class Test
 		};
 
 		return runMethods(...testMethods).finally(()=>{
-			reporter.testComplete(test);
+			reporter.testComplete(this);
 		});
 	}
 }

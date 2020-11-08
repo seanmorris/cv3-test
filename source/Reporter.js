@@ -187,6 +187,11 @@ export class Reporter extends (class{})
 	{
 		const name  = test.constructor.name;
 
+		if(!this.testData.tests[name])
+		{
+			return;
+		}
+
 		const total    = this.testData.tests[name].total    || 0;
 		const good     = this.testData.tests[name].good     || 0;
 		//const failures = this.testData.tests[name].failures || 0;
