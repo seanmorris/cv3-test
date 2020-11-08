@@ -1,13 +1,13 @@
 {
 	"name": "cv3-test",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"description": "Testing code.",
 	"author": "Sean Morris",
 	"license": "Apache-2.0",
 	"preferglobal": true,
 	"dependencies": {},
 	"files": [
-		"/*.js"
+		"/*.js", "bin/*.js"
 	],
 	"main": "test.js",
 	"directories": {
