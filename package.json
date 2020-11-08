@@ -1,23 +1,34 @@
 {
-	"name": "cv3-test"
-	, "version": "0.0.9"
-	, "description": "Testing code."
-	, "author": "Sean Morris"
-	, "license": "Apache-2.0"
-	, "preferglobal": true
-	, "dependencies": {}
-	, "files": [ "/*.js" ]
-	, "main": "test.js"
-	, "directories": { "test": "test" }
-	, "scripts": { "test": "echo \"Error: no test specified\" && exit 1" }
-	, "bin": { "cvtest": "./bin/cvtest.js" }
-	, "repository": {
-		"type" : "git"
-		, "url": "https://github.com/npm/cli.git"
-	}
-	, "devDependencies": {
-		"babel-cli": "^6.26.0"
-		, "babel-preset-es2015": "^6.24.1"
-		, "babel-preset-minify": "^0.5.1"
+	"name": "cv3-test",
+	"version": "0.0.9",
+	"description": "Testing code.",
+	"author": "Sean Morris",
+	"license": "Apache-2.0",
+	"preferglobal": true,
+	"dependencies": {},
+	"files": [
+		"/*.js"
+	],
+	"main": "test.js",
+	"directories": {
+		"test": "test",
+		"test-fail": "test-fail"
+	},
+	"scripts": {
+		"build": "make",
+		"test": "make test",
+		"test-fail": "npx babel source test test-fail --out-dir ."
+	},
+	"bin": {
+		"cvtest": "./bin/cvtest.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/seanmorris/cv3-test"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.8.4",
+		"@babel/core": "^7.8.7",
+		"@babel/preset-env": "^7.0.0"
 	}
 }

@@ -7,6 +7,7 @@ export class Test
 	static run(...tests)
 	{
 		this.expected = false;
+		this.failureIsExpected = false;
 
 		this.reporter = new (this.Reporter || Reporter);
 
@@ -84,7 +85,7 @@ export class Test
 	{
 		if(!Error.isPrototypeOf(errorType))
 		{
-			
+
 		}
 
 		if(callback)
@@ -105,7 +106,7 @@ export class Test
 					throw error;
 				}
 			}
-			
+
 			this.assert(
 				false
 				, `Unmet error expectation, Expected ${errorType.name}.`
@@ -116,6 +117,11 @@ export class Test
 		}
 
 		this.expected = errorType;
+	}
+
+	shouldFail()
+	{
+		this.failureIsExpected = true;
 	}
 
 	setUp()
@@ -144,7 +150,7 @@ export class Test
 			}));
 		}
 
-		reporter.testStarted(this);
+		const test = new constructor({reporter});
 
 		const runMethods = (...methods) => {
 
@@ -153,12 +159,14 @@ export class Test
 				return Promise.resolve();
 			}
 
+			reporter.testStarted(this);
+
 			const method = methods.shift();
-			const test   = new constructor({reporter});
+			const setUp = test.setUp();
 
 			reporter.methodStarted(test, method);
 
-			return test.setUp().then(() => new Promise((accept, reject)=>{
+			return setUp.then(() => {
 
 				let result = test[method]();
 
@@ -167,16 +175,13 @@ export class Test
 					result = Promise.resolve(result);
 				}
 
-				return result.then(accept).catch(reject);
+				return result;
 
-			})).then(()=>{
-
+			}).then(()=>{
 				if(test.expected)
 				{
 					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
 				}
-
-				return test.breakDown();
 
 			}).catch((error)=>{
 				if(error instanceof Error)
@@ -190,7 +195,7 @@ export class Test
 						reporter.exceptionCaught(error);
 						test.fail[test.EXCEPTION]++;
 					}
-					
+
 				}
 				else
 				{
@@ -201,21 +206,16 @@ export class Test
 
 			}).finally(()=>{
 
+				test.breakDown();
+
 				reporter.methodComplete(test, method);
 
 				return runMethods(...methods);
-
 			});
-
-			// test.breakDown();
-
-			// reporter.methodComplete(test, method);
-
-			return runMethods(...methods);
 		};
 
 		return runMethods(...testMethods).finally(()=>{
-			reporter.testComplete(this);
+			reporter.testComplete(test);
 		});
 	}
 }
