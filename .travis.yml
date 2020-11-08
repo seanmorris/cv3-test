@@ -4,4 +4,4 @@ node_js:
 install:
   - make dependencies
   - make build
-script: make test
+script: make test 2>&1
