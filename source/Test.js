@@ -150,6 +150,8 @@ export class Test
 			}));
 		}
 
+		reporter.testStarted(this);
+
 		const runMethods = (...methods) => {
 
 			if(!methods.length)
@@ -157,7 +159,6 @@ export class Test
 				return Promise.resolve();
 			}
 
-			reporter.testStarted(this);
 
 			const test = new constructor({reporter});
 

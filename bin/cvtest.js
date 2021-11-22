@@ -7,11 +7,21 @@ const fsp  = require("fs").promises;
 
 if(!args.length)
 {
-	fsp.readdir(process.cwd()).then(list => 
-		Test.run(...list
-			.map(entry => entry.match(/(.+Test)\.js$/))
-			.filter(x=>x)
-			.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
-			.map(([entry, file]) => require(file)[entry])
+	fsp.readdir(process.cwd()).then(list => Test.run(
+		...list
+		.map(entry => entry.match(/(.+Test)\.js$/))
+		.filter(x=>x)
+		.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
+		.map(([entry, file]) => require(file)[entry])
 	));
+}
+else
+{
+	Test.run(
+		...args
+		.map(entry => entry.match(/(.+Test)\.js$/))
+		.filter(x=>x)
+		.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
+		.map(([entry, file]) => require(file)[entry])
+	);
 }

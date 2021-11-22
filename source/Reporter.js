@@ -119,7 +119,7 @@ export class Reporter extends (class{})
 
 		this.box(47
 			, `Curvature 3 Testing Framework ${packageInfo.version}`
-			, `© 2019-2020 Sean Morris`
+			, `© 2019-2021 Sean Morris`
 			, ``
 			, `https://www.npmjs.com/package/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
@@ -149,7 +149,7 @@ export class Reporter extends (class{})
 
 		).filter(x=>x);
 
-		let icon = badTests ? '💀' : ' ✓';
+		let icon = badTests.length ? '💀' : ' ✓';
 
 		const message = this.Format(
 			` ${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
@@ -163,7 +163,7 @@ export class Reporter extends (class{})
 
 		if(process !== undefined)
 		{
-			// process.exitCode = !!badTests;
+			process.exitCode = !!badTests.length;
 		}
 
 		this.Print(`----------- ☯  Testing completed ☯  -----------`);
@@ -176,9 +176,9 @@ export class Reporter extends (class{})
 		this.testData.tests[name] = this.testData.tests[name] || {total: 0};
 
 		this.Print(this.Format(
-			`▼  Running Test: ${
+			` ▼ Running Test: ${
 				this.Format(name, this.TEST_NAME)
-			}\n`
+			}`
 			, this.HEADING
 		));
 	}
@@ -216,7 +216,7 @@ export class Reporter extends (class{})
 
 			this.Print(
 				this.Format(
-					`  ${icon} ${good}/${total} successful assertation${good===1?'':'s'} in ${name}.\n`
+					`\n ${icon}  ${good}/${total} successful assertation${good===1?'':'s'} in ${name}.\n`
 					, color
 				)
 			);
@@ -290,18 +290,18 @@ export class Reporter extends (class{})
 
 		if(!hardFails && !test.fail[test.EXCEPTION])
 		{
-			let icon  = '✓';
+			let icon  = ' ✓';
 			let color = this.METHOD_SUCCESS;
 
 			if(test.fail[test.NOTICE])
 			{
-				icon = '-';
+				icon = ' -';
 				color = this.METHOD_NOTICE;
 			}
 
 			this.Print(
 				this.Format(
-					`\n     ${icon}  ${test.good}/${test.total} successful assertation${test.good===1?'':'s'} in ${method}.\n`
+					` ${icon}  ${test.good}/${test.total} successful assertation${test.good===1?'':'s'} in ${method}.`
 					, color
 				)
 			);
