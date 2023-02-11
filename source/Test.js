@@ -60,7 +60,7 @@ export class Test
 
 	assert(condition, errorMessage, level = this.ERROR)
 	{
-		this.reporter.assertation(errorMessage, level);
+		this.reporter.assertion(errorMessage, level);
 
 		this.total++;
 
@@ -78,7 +78,7 @@ export class Test
 
 		this.fail[level]++
 
-		this.reporter.assertationFailed(errorMessage, level);
+		this.reporter.assertionFailed(errorMessage, level);
 	}
 
 	expect(errorType, callback = null)

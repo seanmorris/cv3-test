@@ -119,7 +119,7 @@ export class Reporter extends (class{})
 
 		this.box(47
 			, `Curvature 3 Testing Framework ${packageInfo.version}`
-			, `© 2019-2021 Sean Morris`
+			, `© 2019-2023 Sean Morris`
 			, ``
 			, `https://www.npmjs.com/package/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
@@ -216,7 +216,7 @@ export class Reporter extends (class{})
 
 			this.Print(
 				this.Format(
-					`\n ${icon}  ${good}/${total} successful assertation${good===1?'':'s'} in ${name}.\n`
+					`\n ${icon}  ${good}/${total} successful assertion${good===1?'':'s'} in ${name}.\n`
 					, color
 				)
 			);
@@ -235,7 +235,7 @@ export class Reporter extends (class{})
 			color = this.TEST_FAIL;
 		}
 
-		this.Print(this.Format(`  ${icon} ${total} assertation${total===1?'':'s'} in ${name}.`
+		this.Print(this.Format(`  ${icon} ${total} assertion${total===1?'':'s'} in ${name}.`
 			+ `\n     ${good} Succeeded`
 			+ `, ${failedAssertations} Failed: `
 			+ `\n     ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
@@ -301,7 +301,7 @@ export class Reporter extends (class{})
 
 			this.Print(
 				this.Format(
-					` ${icon}  ${test.good}/${test.total} successful assertation${test.good===1?'':'s'} in ${method}.`
+					` ${icon}  ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
 					, color
 				)
 			);
@@ -323,7 +323,7 @@ export class Reporter extends (class{})
 			color = this.METHOD_FAIL;
 		}
 
-		this.Print(this.Format(`\n     ${icon} ${test.total} assertation${test.total===1?'':'s'} in ${method}.`
+		this.Print(this.Format(`\n     ${icon} ${test.total} assertion${test.total===1?'':'s'} in ${method}.`
 			+ `\n        ${test.good} Succeeded`
 			+ `, ${failedAssertations} Failed: `
 			+ `\n        ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
@@ -335,11 +335,11 @@ export class Reporter extends (class{})
 		, color));
 	}
 
-	assertation(errorMessage, level)
+	assertion(errorMessage, level)
 	{
 	}
 
-	assertationFailed(errorMessage, level)
+	assertionFailed(errorMessage, level)
 	{
 		let icon   = '💀';
 		let color = this.ASSERT_FAIL;

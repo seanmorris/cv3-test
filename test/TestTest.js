@@ -19,7 +19,7 @@ export class TestTest extends Test
 
 	testMultilineAssertation()
 	{
-		this.assert(0 === 1, `Random assertation with\nmultiple lines!`, this.NOTICE);
+		this.assert(0 === 1, `Random assertion with\nmultiple lines!`, this.NOTICE);
 	}
 
 	testEmpty()
