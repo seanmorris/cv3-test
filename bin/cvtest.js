@@ -19,7 +19,7 @@ else
 {
 	Test.run(
 		...args
-		.map(entry => entry.match(/(test).+?\.js$/))
+		.map(entry => entry.match(/(.+?Test)\.js$/))
 		.filter(x=>x)
 		.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
 		.map(([entry, file]) => require(file)[entry])
