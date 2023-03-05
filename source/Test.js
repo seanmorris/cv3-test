@@ -6,16 +6,15 @@ export class Test
 {
 	static run(...tests)
 	{
-		this.expected = false;
 		this.failureIsExpected = false;
+		this.currentMethod = null;
+		this.expected = false;
 
 		this.reporter = new (this.Reporter || Reporter);
 
 		this.reporter.suiteStarted();
 
-		return this[recurse](...tests).finally(()=>{
-			this.reporter.suiteComplete();
-		});
+		return this[recurse](...tests).finally(() => this.reporter.suiteComplete());
 	}
 
 	static [recurse](...tests)
@@ -46,27 +45,23 @@ export class Test
 		this.error = 0;
 		this.fail  = [];
 
-		['REJECTION', 'EXCEPTION', 'ERROR', 'WARN', 'NOTICE'].map((level, index)=>{
-
+		['REJECTION', 'EXCEPTION', 'ERROR', 'WARN', 'NOTICE'].map((level, index) => {
+			Object.defineProperty(this, level, {value: index});
 			this.fail[index] = 0;
-
-			Object.defineProperty(this, level, {
-				enumerable: false,
-				writable:   false,
-				value:      index
-			});
 		});
 	}
 
 	assert(condition, errorMessage, level = this.ERROR)
 	{
-		this.reporter.assertion(errorMessage, level);
+		this.reporter.assertion(errorMessage, level, this);
 
 		this.total++;
 
 		if(condition)
 		{
 			this.good++;
+
+			this.reporter.assertionPassed(errorMessage, level, this);
 
 			return;
 		}
@@ -78,7 +73,7 @@ export class Test
 
 		this.fail[level]++
 
-		this.reporter.assertionFailed(errorMessage, level);
+		this.reporter.assertionFailed(errorMessage, level, this);
 	}
 
 	expect(errorType, callback = null)
@@ -112,7 +107,6 @@ export class Test
 				, `Unmet error expectation, Expected ${errorType.name}.`
 			);
 
-
 			return;
 		}
 
@@ -143,7 +137,7 @@ export class Test
 			;   object != null
 			;   object = Object.getPrototypeOf(object)
 		){
-			testMethods.push(...Object.getOwnPropertyNames(object).filter((property)=>{
+			testMethods.push(...Object.getOwnPropertyNames(object).filter((property) => {
 				return object[property] instanceof Function
 					&& object[property] !== object.constructor
 					&& property.match(/^test/);
@@ -169,6 +163,8 @@ export class Test
 
 			return setUp.then(() => {
 
+				test.currentMethod = method;
+
 				let result = test[method]();
 
 				if(!(result instanceof Promise))
@@ -178,13 +174,15 @@ export class Test
 
 				return result;
 
-			}).then(()=>{
+			})
+			.then(() => {
 				if(test.expected)
 				{
 					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
 				}
 
-			}).catch((error)=>{
+			})
+			.catch(error => {
 				if(error instanceof Error)
 				{
 					if(test.expected && error instanceof test.expected)
@@ -196,7 +194,6 @@ export class Test
 						reporter.exceptionCaught(error);
 						test.fail[test.EXCEPTION]++;
 					}
-
 				}
 				else
 				{
@@ -205,18 +202,19 @@ export class Test
 					test.fail[test.REJECTION]++;
 				}
 
-			}).finally(()=>{
+			})
+			.finally(()=>{
 
 				test.breakDown();
 
 				reporter.methodComplete(test, method);
 
+				test.currentMethod = null;
+
 				return runMethods(...methods);
 			});
 		};
 
-		return runMethods(...testMethods).finally(()=>{
-			reporter.testComplete(this);
-		});
+		return runMethods(...testMethods).finally(() => reporter.testComplete(this));
 	}
 }

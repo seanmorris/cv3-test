@@ -167,13 +167,15 @@ export class Reporter extends (class{})
 		}
 
 		this.Print(`----------- ☯  Testing completed ☯  -----------`);
+
+		process.stdout.write(JSON.stringify(this.testData.tests));
 	}
 
 	testStarted(test)
 	{
 		const name = test.constructor.name;
 
-		this.testData.tests[name] = this.testData.tests[name] || {total: 0};
+		this.testData.tests[name] = this.testData.tests[name] || {total: 0, good:0, failures:0, fail:[], methods:{}};
 
 		this.Print(this.Format(
 			` ▼ Running Test: ${
@@ -192,16 +194,14 @@ export class Reporter extends (class{})
 			return;
 		}
 
+		const failedAssertations = this.filterFails(fail, [test.REJECTION, test.EXCEPTION, test.NOTICE]).reduce((a,b)=>a+b,0);
+
+		const hardFails = this.filterFails(fail, [test.NOTICE]).reduce((a,b)=>a+b,0);
+
 		const total    = this.testData.tests[name].total    || 0;
 		const good     = this.testData.tests[name].good     || 0;
-		//const failures = this.testData.tests[name].failures || 0;
+		const failures = hardFails;
 		const fail     = this.testData.tests[name].fail     || [];
-
-		const failedAssertations = this.filterFails(fail, [
-			test.fail.REJECTION, test.fail.EXCEPTION, test.fail.NOTICE
-		]).reduce((a,b)=>a+b,0);
-
-		const hardFails = this.filterFails(fail, [test.fail.EXCEPTION, test.fail.ERROR, test.fail.REJECTION]).reduce((a,b)=>a+b,0);
 
 		if(!hardFails)
 		{
@@ -250,6 +250,10 @@ export class Reporter extends (class{})
 
 	methodStarted(test, method)
 	{
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[method] = {total: 0, good: 0, failures: 0, messages: []};
+
 		this.Print(this.Format(
 			`  ▶  Method: ${
 				this.Format(method, this.METHOD_NAME)
@@ -272,14 +276,18 @@ export class Reporter extends (class{})
 
 		this.testData.total += test.total;
 
-		this.testData.tests[name].total     = this.testData.tests[name].total     || 0;
-		this.testData.tests[name].good      = this.testData.tests[name].good      || 0;
-		this.testData.tests[name].failures  = hardFails  || 0;
-		this.testData.tests[name].fail      = this.testData.tests[name].fail      || [];
+		this.testData.tests[name].total     = this.testData.tests[name].total    || 0;
+		this.testData.tests[name].good      = this.testData.tests[name].good     || 0;
+		this.testData.tests[name].failures  = this.testData.tests[name].failures || 0;
+		this.testData.tests[name].fail      = this.testData.tests[name].fail     || [];
 
 		this.testData.tests[name].total     += test.total;
 		this.testData.tests[name].good      += test.good;
 		this.testData.tests[name].failures  += hardFails;
+
+		this.testData.tests[name].methods[method].total    = test.total;
+		this.testData.tests[name].methods[method].good     = test.good;
+		this.testData.tests[name].methods[method].failures = hardFails;
 
 		for(let i in test.fail)
 		{
@@ -335,12 +343,18 @@ export class Reporter extends (class{})
 		, color));
 	}
 
-	assertion(errorMessage, level)
-	{
-	}
+	assertion(errorMessage, level, test)
+	{}
 
-	assertionFailed(errorMessage, level)
+	assertionPassed(errorMessage, level, test)
+	{}
+
+	assertionFailed(errorMessage, level, test)
 	{
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].messages.push(errorMessage);
+
 		let icon   = '💀';
 		let color = this.ASSERT_FAIL;
 
@@ -356,7 +370,7 @@ export class Reporter extends (class{})
 		}
 
 		this.Print(
-			this.Format(`     ${icon} ${errorMessage.replace(/\n/g, "\n        ")}`, color)
+			this.Format(`     ${icon} ${String(errorMessage).replace(/\n/g, "\n        ")}`, color)
 		);
 	}
 
