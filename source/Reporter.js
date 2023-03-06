@@ -11,7 +11,7 @@ export class Reporter extends (class{})
 			switch(type)
 			{
 				case this.NORMAL:
-					message = `\x1b[7m${message}\x1b[0m`;
+					message = `\x1b[0m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_NAME:
@@ -73,6 +73,14 @@ export class Reporter extends (class{})
 				case this.HEADING:
 					message = `${message}\x1b[0m`;
 					break;
+
+				case this.DIM:
+					message = `\x1b[37m${message}\x1b[0m`;
+					break;
+
+				case this.DIMMER:
+					message = `\x1b[90m${message}\x1b[0m`;
+					break;
 			}
 
 			return message;
@@ -84,6 +92,7 @@ export class Reporter extends (class{})
 			'NORMAL', 'TEST_NAME', 'TEST_SUCCESS', 'TEST_FAIL', 'TEST_NOTICE', 'TEST_WARN'
 			, 'METHOD_NAME', 'METHOD_SUCCESS', 'METHOD_FAIL', 'METHOD_NOTICE', 'METHOD_WARN'
 			, 'ASSERT_FAIL', 'ASSERT_WARN', 'ASSERT_NOTICE', 'EXCEPTION', 'HEADING'
+			, 'DIM', 'DIMMER'
 		].map((level, index)=>{
 
 			Object.defineProperty(this, level, {
@@ -149,7 +158,7 @@ export class Reporter extends (class{})
 
 		).filter(x=>x);
 
-		let icon = badTests.length ? '💀' : ' ✓';
+		let icon = badTests.length ? '💀' : ' ✔';
 
 		const message = this.Format(
 			` ${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
@@ -205,7 +214,7 @@ export class Reporter extends (class{})
 
 		if(!hardFails)
 		{
-			let icon  = ' ✓';
+			let icon  = ' ✔';
 			let color = this.TEST_SUCCESS;
 
 			if(fail[test.NOTICE] || !good)
@@ -216,7 +225,7 @@ export class Reporter extends (class{})
 
 			this.Print(
 				this.Format(
-					`\n ${icon}  ${good}/${total} successful assertion${good===1?'':'s'} in ${name}.\n`
+					`\n ${icon} ${good}/${total} successful assertion${good===1?'':'s'} in ${name}.\n`
 					, color
 				)
 			);
@@ -235,10 +244,10 @@ export class Reporter extends (class{})
 			color = this.TEST_FAIL;
 		}
 
-		this.Print(this.Format(`  ${icon} ${total} assertion${total===1?'':'s'} in ${name}.`
-			+ `\n     ${good} Succeeded`
+		this.Print(this.Format(`${icon} ${total} assertion${total===1?'':'s'} in ${name}.`
+			+ `\n   ${good} Succeeded`
 			+ `, ${failedAssertations} Failed: `
-			+ `\n     ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
+			+ `\n   ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
 			+ `, ${fail[test.WARN]     } Warning${fail[test.WARN]===1?'':'s'}`
 			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}`
 			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
@@ -255,10 +264,7 @@ export class Reporter extends (class{})
 		this.testData.tests[name].methods[method] = {total: 0, good: 0, failures: 0, messages: []};
 
 		this.Print(this.Format(
-			`  ▶  Method: ${
-				this.Format(method, this.METHOD_NAME)
-			}`
-			, this.HEADING
+			`  ▶ Method: ${this.Format(method, this.METHOD_NAME)}`, this.HEADING
 		));
 	}
 
@@ -281,9 +287,9 @@ export class Reporter extends (class{})
 		this.testData.tests[name].failures  = this.testData.tests[name].failures || 0;
 		this.testData.tests[name].fail      = this.testData.tests[name].fail     || [];
 
-		this.testData.tests[name].total     += test.total;
-		this.testData.tests[name].good      += test.good;
-		this.testData.tests[name].failures  += hardFails;
+		this.testData.tests[name].total     += test.total ? 1 : 0;
+		this.testData.tests[name].good      += test.good  ? 1 : 0;
+		this.testData.tests[name].failures  += hardFails  ? 1 : 0;
 
 		this.testData.tests[name].methods[method].total    = test.total;
 		this.testData.tests[name].methods[method].good     = test.good;
@@ -298,7 +304,7 @@ export class Reporter extends (class{})
 
 		if(!hardFails && !test.fail[test.EXCEPTION])
 		{
-			let icon  = ' ✓';
+			let icon  = ' ✔';
 			let color = this.METHOD_SUCCESS;
 
 			if(test.fail[test.NOTICE])
@@ -307,12 +313,10 @@ export class Reporter extends (class{})
 				color = this.METHOD_NOTICE;
 			}
 
-			this.Print(
-				this.Format(
-					` ${icon}  ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
-					, color
-				)
-			);
+			this.Print(this.Format(
+				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
+				, color
+			));
 			return;
 		}
 
@@ -331,10 +335,10 @@ export class Reporter extends (class{})
 			color = this.METHOD_FAIL;
 		}
 
-		this.Print(this.Format(`\n     ${icon} ${test.total} assertion${test.total===1?'':'s'} in ${method}.`
-			+ `\n        ${test.good} Succeeded`
+		this.Print(this.Format(`\n   ${icon} ${test.total} assertion${test.total===1?'':'s'} in ${method}.`
+			+ `\n      ${test.good} Succeeded`
 			+ `, ${failedAssertations} Failed: `
-			+ `\n        ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
+			+ `\n      ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
 			+ `, ${test.fail[test.WARN]     } Warning${test.fail[test.WARN]===1?'':'s'}`
 			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}`
 			+ `, ${test.fail[test.EXCEPTION]} Exception${test.fail[test.EXCEPTION]===1?'':'s'}`
@@ -370,34 +374,39 @@ export class Reporter extends (class{})
 		}
 
 		this.Print(
-			this.Format(`     ${icon} ${String(errorMessage).replace(/\n/g, "\n        ")}`, color)
+			this.Format(`   ${icon} ${String(errorMessage).replace(/\n/g, "\n       ")}`, color)
 		);
 	}
 
-	exceptionCaught(exception)
+	exceptionCaught(exception, test)
 	{
-		this.Print(
-			"     " + this.Format(
-				'💀 ' + exception.stack.toString()
-					.replace(/\n\s+/g, "\n          ")
-					.replace(/\n\b/g, "\n        ")
-				, this.EXCEPTION
-			)
-		);
+		const message = String(exception.stack || exception);
+
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].messages.push(message);
+
+		this.Print(this.Format(
+			'   💀 ' + message.replace(/\n\s+/g, "\n        ").replace(/\n\b/g, "\n      ")
+			, this.EXCEPTION
+		));
 	}
 
-	promiseRejected(rejection)
+	promiseRejected(rejection, test)
 	{
 		let message = rejection;
+
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].messages.push(message);
 
 		if(rejection instanceof Error)
 		{
 			message = rejection.message;
 		}
 
-		this.Print("     " + this.Format('💀 '
-			+ (message || '').replace(/\n/g, "\n        ")
-			, this.EXCEPTION)
+		this.Print(this.Format(
+			'   💀 ' + (message || '').replace(/\n/g, "\n      "), this.EXCEPTION)
 		);
 	}
 

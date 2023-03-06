@@ -153,16 +153,14 @@ export class Test
 				return Promise.resolve();
 			}
 
-
 			const test = new constructor({reporter});
 
 			const method = methods.shift();
-			const setUp = test.setUp();
+			const setUp  = test.setUp();
 
 			reporter.methodStarted(test, method);
 
 			return setUp.then(() => {
-
 				test.currentMethod = method;
 
 				let result = test[method]();
@@ -180,7 +178,6 @@ export class Test
 				{
 					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
 				}
-
 			})
 			.catch(error => {
 				if(error instanceof Error)
@@ -191,19 +188,17 @@ export class Test
 					}
 					else
 					{
-						reporter.exceptionCaught(error);
+						reporter.exceptionCaught(error, test);
 						test.fail[test.EXCEPTION]++;
 					}
 				}
 				else
 				{
-					reporter.promiseRejected(error);
-
+					reporter.promiseRejected(error, test);
 					test.fail[test.REJECTION]++;
 				}
-
 			})
-			.finally(()=>{
+			.finally(() => {
 
 				test.breakDown();
 
@@ -216,5 +211,105 @@ export class Test
 		};
 
 		return runMethods(...testMethods).finally(() => reporter.testComplete(this));
+	}
+
+	assertEquals(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a === b, errorMessage, level);
+	}
+
+	assertSimilar(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a == b, errorMessage, level);
+	}
+
+	assertStringsEqual(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(String(a) === String(b), errorMessage, level);
+	}
+
+	assertNumbersEqual(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(Number(a) === Number(b), errorMessage, level);
+	}
+
+	assertGreaterThan(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a > b, errorMessage, level);
+	}
+
+	assertGreaterThanOrEquals(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a >= b, errorMessage, level);
+	}
+
+	assertLessThan(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a < b, errorMessage, level);
+	}
+
+	assertLessThanOrEquals(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a <= b, errorMessage, level);
+	}
+
+	assertInstanceOf(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(a instanceof b, errorMessage, level);
+	}
+
+	assertTypeOf(a, b, errorMessage, level = this.ERROR)
+	{
+		if(typeof errorMessage === 'function')
+		{
+			errorMessage = errorMessage(a,b);
+		}
+
+		this.assert(typeof a === b, errorMessage, level);
 	}
 }
