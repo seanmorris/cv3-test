@@ -1,4 +1,4 @@
-import { Test } from './Test';
+import { Test } from '../Test.js';
 
 export class TestTest extends Test
 {
@@ -7,13 +7,25 @@ export class TestTest extends Test
 		this.assert(0 === 0, '0 is not equal to 0!');
 	}
 
-	testWarning()
+	testWarningOnly()
 	{
 		this.assert(0 === 1, '0 is not equal to 1!', this.WARN);
 	}
 
-	testNotice()
+	testWarningAndSuccess()
 	{
+		this.assert(1 === 1, '1 is not equal to 1!', this.WARN);
+		this.assert(0 === 1, '0 is not equal to 1!', this.WARN);
+	}
+
+	testNoticeOnly()
+	{
+		this.assert(0 === 1, '0 is not equal to 1!', this.NOTICE);
+	}
+
+	testNoticeAndSuccess()
+	{
+		this.assert(1 === 1, '1 is not equal to 1!', this.NOTICE);
 		this.assert(0 === 1, '0 is not equal to 1!', this.NOTICE);
 	}
 

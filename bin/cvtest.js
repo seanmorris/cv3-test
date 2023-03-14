@@ -3,25 +3,55 @@
 const [bin, script, ...args] = process.argv;
 
 const Test = require("../Test").Test;
+const path = require("path");
 const fsp  = require("fs").promises;
 
-if(!args.length)
+const getTestList = !args.length
+	? fsp.readdir(process.cwd())
+	: Promise.resolve(args);
+
+const loadTests = getTestList.then(list => Promise.all(
+	list
+	.map(entry => entry.match(/(.+Test)\.[cm]?js$/))
+	.filter(x=>x)
+	.map(entry => [path.basename(entry[1]), process.cwd() + '/' + entry[0]])
+	.map(([testName,file]) => import(file).then(t => t[testName]))
+));
+
+loadTests.then(tests => Test.run(...tests));
+
+
+
+/*
+const options = {};
+const params  = [];
+
+let i = 2;
+
+for(const arg of process.argv.slice(2))
 {
-	fsp.readdir(process.cwd()).then(list => Test.run(
-		...list
-		.map(entry => entry.match(/(.+Test)\.js$/))
-		.filter(x=>x)
-		.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
-		.map(([entry, file]) => require(file)[entry])
-	));
+
+	if(arg == '--')
+		break;
+
+	if(arg.length <= 1 || arg[0] !== '-')
+		params.push(arg);
+		continue;
+
+	if(arg[1] !== '-')
+	{
+		arg.substr(1).split('').forEach(c => options[c] = true);
+		continue;
+	}
+
+	const equalPoint = arg.indexOf('=');
+
+	if(equalPoint>0)
+	{
+		options[arg.substr(2,equalPoint+-2)] = arg.substr(1+equalPoint);
+		continue;
+	}
+
+	options[arg.substr(2)] = true;
 }
-else
-{
-	Test.run(
-		...args
-		.map(entry => entry.match(/(.+?Test)\.js$/))
-		.filter(x=>x)
-		.map(entry => [entry[1], process.cwd() + '/' + entry[0]])
-		.map(([entry, file]) => require(file)[entry])
-	);
-}
+*/

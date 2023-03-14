@@ -76,6 +76,32 @@ export class Test
 		this.reporter.assertionFailed(errorMessage, level, this);
 	}
 
+	annotate(message)
+	{
+		this.reporter.annotate(message, this);
+	}
+
+	assertSilent(condition, errorMessage, level = this.ERROR)
+	{
+		this.total++;
+
+		if(condition)
+		{
+			this.good++;
+
+			return;
+		}
+
+		if(!this.fail[level])
+		{
+			this.fail[level] = 0;
+		}
+
+		this.fail[level]++
+
+		this.reporter.assertionFailedSilent(errorMessage, level, this);
+	}
+
 	expect(errorType, callback = null)
 	{
 		if(!Error.isPrototypeOf(errorType))
@@ -158,10 +184,11 @@ export class Test
 			const method = methods.shift();
 			const setUp  = test.setUp();
 
+			test.currentMethod = method;
+
 			reporter.methodStarted(test, method);
 
 			return setUp.then(() => {
-				test.currentMethod = method;
 
 				let result = test[method]();
 
@@ -171,7 +198,6 @@ export class Test
 				}
 
 				return result;
-
 			})
 			.then(() => {
 				if(test.expected)
@@ -194,7 +220,11 @@ export class Test
 				}
 				else
 				{
-					reporter.promiseRejected(error, test);
+					const stringError = (error.toString && String(error) !== '[object Object]')
+						? String(error)
+						: JSON.stringify(error);
+
+					reporter.promiseRejected(stringError, test);
 					test.fail[test.REJECTION]++;
 				}
 			})

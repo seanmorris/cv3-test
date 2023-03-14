@@ -27,7 +27,7 @@ export class Reporter extends (class{})
 					break;
 
 				case this.ASSERT_WARN:
-					message = `\x1b[38;5:227m${message}\x1b[0m`;
+					message = `\x1b[93m${message}\x1b[0m`;
 					break;
 
 				case this.ASSERT_NOTICE:
@@ -43,7 +43,7 @@ export class Reporter extends (class{})
 					break;
 
 				case this.METHOD_WARN:
-					message = `\x1b[38;5:227m${message}\x1b[0m`;
+					message = `\x1b[93m${message}\x1b[0m`;
 					break;
 
 				case this.METHOD_NOTICE:
@@ -55,11 +55,11 @@ export class Reporter extends (class{})
 					break;
 
 				case this.TEST_FAIL:
-					message = `\x1b[38:2:255:0:0m${message}\x1b[0m`;
+					message = `\x1b[31m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_WARN:
-					message = `\x1b[33m${message}\x1b[0m`;
+					message = `\x1b[93m${message}\x1b[0m`;
 					break;
 
 				case this.TEST_NOTICE:
@@ -86,7 +86,7 @@ export class Reporter extends (class{})
 			return message;
 		});
 
-		this.testData = {total:0, tests:{}, totals: {}};
+		this.testData = {totals: {}, tests:{}};
 
 		[
 			'NORMAL', 'TEST_NAME', 'TEST_SUCCESS', 'TEST_FAIL', 'TEST_NOTICE', 'TEST_WARN'
@@ -105,7 +105,6 @@ export class Reporter extends (class{})
 
 	box(width, ...lines)
 	{
-		this.Print('');
 		this.Print('#'.repeat(width));
 		this.Print('#', ' '.repeat(width - 4), '#');
 
@@ -148,7 +147,7 @@ export class Reporter extends (class{})
 
 		const goodTests = tests.map(
 
-			t => !this.filterFails(t.fail, unexpected(t)).reduce((a,b)=>a+b,0)
+			t => t.good && !this.filterFails(t.fail, unexpected(t)).reduce((a,b)=>a+b,0)
 
 		).filter(x=>x);
 
@@ -158,15 +157,19 @@ export class Reporter extends (class{})
 
 		).filter(x=>x);
 
-		let icon = badTests.length ? '💀' : ' ✔';
+		let icon = badTests.length ? ' \u2716' : ' ✔';
 
 		const message = this.Format(
 			` ${icon} ${totalTests} Test${totalTests===1?'':'s'} ran.`
 				+ `\n    ${goodTests.length} Passed.`
 				+ `\n    ${badTests.length} Failed.`
 				+ `\n`
-			, badTests ? this.TEST_FAIL : this.TEST_SUCCESS
+			, badTests.length ? this.TEST_FAIL : this.TEST_SUCCESS
 		);
+
+		this.testData.totals.total = tests.length;
+		this.testData.totals.good  = goodTests.length;
+		this.testData.totals.bad   = badTests.length;
 
 		this.Print(message);
 
@@ -177,7 +180,7 @@ export class Reporter extends (class{})
 
 		this.Print(`----------- ☯  Testing completed ☯  -----------`);
 
-		process.stdout.write(JSON.stringify(this.testData.tests));
+		process.stdout.write(JSON.stringify(this.testData, null, '\t'));
 	}
 
 	testStarted(test)
@@ -187,7 +190,7 @@ export class Reporter extends (class{})
 		this.testData.tests[name] = this.testData.tests[name] || {total: 0, good:0, failures:0, fail:[], methods:{}};
 
 		this.Print(this.Format(
-			` ▼ Running Test: ${
+			` ▾ Running Test: ${
 				this.Format(name, this.TEST_NAME)
 			}`
 			, this.HEADING
@@ -203,51 +206,63 @@ export class Reporter extends (class{})
 			return;
 		}
 
+		const fail      = this.testData.tests[name].fail  || [];
 		const failedAssertations = this.filterFails(fail, [test.REJECTION, test.EXCEPTION, test.NOTICE]).reduce((a,b)=>a+b,0);
 
 		const hardFails = this.filterFails(fail, [test.NOTICE]).reduce((a,b)=>a+b,0);
+		const total     = this.testData.tests[name].total || 0;
+		const good      = this.testData.tests[name].good  || 0;
+		const failures  = this.testData.tests[name].failures || 0;;
 
-		const total    = this.testData.tests[name].total    || 0;
-		const good     = this.testData.tests[name].good     || 0;
-		const failures = hardFails;
-		const fail     = this.testData.tests[name].fail     || [];
+		const totalMethods = this.testData.tests[name].totalMethods || 0;
+		const goodMethods  = this.testData.tests[name].goodMethods  || 0;
+		const failureMethods = this.testData.tests[name].failureMethods  || 0;
 
 		if(!hardFails)
 		{
 			let icon  = ' ✔';
 			let color = this.TEST_SUCCESS;
 
-			if(fail[test.NOTICE] || !good)
+			this.testData.tests[name].rank = 0;
+
+			if(fail[test.NOTICE] || !goodMethods)
 			{
-				icon  = ' -';
+				icon = ' \uD83D\uDFB4';
 				color = this.TEST_NOTICE;
+
+				this.testData.tests[name].rank = 1;
 			}
 
-			this.Print(
-				this.Format(
-					`\n ${icon} ${good}/${total} successful assertion${good===1?'':'s'} in ${name}.\n`
-					, color
-				)
-			);
+			this.Print((!total ? '\n' : '') + this.Format(
+				` ${icon} ${good}/${total} successful assertion${good===1?'':'s'} in ${name}.\n`
+				+ `    ${goodMethods}/${totalMethods} successful method${goodMethods===1?'':'s'} in ${name}.\n`
+				, color
+			));
 
 			this.Print(`-----------------------------------------------\n`);
 
 			return;
 		}
 
-		let icon  = '☢ ';
+		let icon  = ' \u2622';
 		let color = this.TEST_WARN;
 
-		if(hardFails)
+		this.testData.tests[name].rank = 2;
+
+		if(fail[test.ERROR] || fail[test.EXCEPTION] || fail[test.REJECTION])
 		{
-			icon  = '💀';
+			icon  = ' \u2716';
 			color = this.TEST_FAIL;
+
+			this.testData.tests[name].rank = 3;
 		}
 
-		this.Print(this.Format(`${icon} ${total} assertion${total===1?'':'s'} in ${name}.`
-			+ `\n   ${good} Succeeded`
-			+ `, ${failedAssertations} Failed: `
-			+ `\n   ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
+		this.Print(this.Format(` ${icon} ${name}`
+			+ `\n    ${totalMethods} method${totalMethods===1?'':'s'}, `
+			+ `${goodMethods} Succeeded, ${failureMethods} Failed.`
+			+ `\n    ${total} assertion${total===1?'':'s'}, `
+			+ `${good} Succeeded, ${failedAssertations} Failed.`
+			+ `\n    ${fail[test.ERROR]} Error${fail[test.ERROR]===1?'':'s'}`
 			+ `, ${fail[test.WARN]     } Warning${fail[test.WARN]===1?'':'s'}`
 			+ `, ${fail[test.NOTICE]   } Notice${fail[test.NOTICE]===1?'':'s'}`
 			+ `, ${fail[test.EXCEPTION]} Exception${fail[test.EXCEPTION]===1?'':'s'}`
@@ -261,10 +276,10 @@ export class Reporter extends (class{})
 	{
 		const name = test.constructor.name;
 
-		this.testData.tests[name].methods[method] = {total: 0, good: 0, failures: 0, messages: []};
+		this.testData.tests[name].methods[method] = {total: 0, good: 0, failures: 0, alerts: [], annotations: []};
 
 		this.Print(this.Format(
-			`  ▶ Method: ${this.Format(method, this.METHOD_NAME)}`, this.HEADING
+			`  ▸ Method: ${this.Format(method, this.METHOD_NAME)}`, this.HEADING
 		));
 	}
 
@@ -280,16 +295,22 @@ export class Reporter extends (class{})
 
 		const failures = test.fail.reduce((a,b)=>a+b,0);
 
-		this.testData.total += test.total;
+		this.testData.tests[name].totalMethods   = this.testData.tests[name].totalMethods   || 0;
+		this.testData.tests[name].goodMethods    = this.testData.tests[name].goodMethods    || 0;
+		this.testData.tests[name].failureMethods = this.testData.tests[name].failureMethods || 0;
 
 		this.testData.tests[name].total     = this.testData.tests[name].total    || 0;
 		this.testData.tests[name].good      = this.testData.tests[name].good     || 0;
 		this.testData.tests[name].failures  = this.testData.tests[name].failures || 0;
 		this.testData.tests[name].fail      = this.testData.tests[name].fail     || [];
 
-		this.testData.tests[name].total     += test.total ? 1 : 0;
-		this.testData.tests[name].good      += test.good  ? 1 : 0;
-		this.testData.tests[name].failures  += hardFails  ? 1 : 0;
+		this.testData.tests[name].total     += test.total;
+		this.testData.tests[name].good      += test.good;
+		this.testData.tests[name].failures  += hardFails;
+
+		this.testData.tests[name].totalMethods   += 1
+;		this.testData.tests[name].goodMethods    += (test.good && !hardFails) ? 1:0;
+		this.testData.tests[name].failureMethods += !test.good ? 1:0;
 
 		this.testData.tests[name].methods[method].total    = test.total;
 		this.testData.tests[name].methods[method].good     = test.good;
@@ -302,42 +323,36 @@ export class Reporter extends (class{})
 			this.testData.tests[name].fail[i] += test.fail[i];
 		}
 
-		if(!hardFails && !test.fail[test.EXCEPTION])
+		if(!hardFails)
 		{
 			let icon  = ' ✔';
 			let color = this.METHOD_SUCCESS;
 
-			if(test.fail[test.NOTICE])
+			if(test.fail[test.NOTICE] || !test.good)
 			{
-				icon = ' -';
+				icon = ' \uD83D\uDFB4';
 				color = this.METHOD_NOTICE;
 			}
 
 			this.Print(this.Format(
-				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
+				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.\n`
 				, color
 			));
 			return;
 		}
 
-		let icon  = '☢ ';
+		let icon  = ' \u2622';
 		let color = this.METHOD_WARN;
 
 		if(test.fail[test.ERROR] || test.fail[test.EXCEPTION] || test.fail[test.REJECTION])
 		{
-			icon  = '💀';
+			icon  = ' \u2716';
 			color = this.METHOD_FAIL;
 		}
 
-		if(test.fail[test.ERROR] || test.fail[test.EXCEPTION] || test.fail[test.REJECTION])
-		{
-			icon  = '💀';
-			color = this.METHOD_FAIL;
-		}
-
-		this.Print(this.Format(`\n   ${icon} ${test.total} assertion${test.total===1?'':'s'} in ${method}.`
-			+ `\n      ${test.good} Succeeded`
-			+ `, ${failedAssertations} Failed: `
+		this.Print(`\n   ` + this.Format(`${icon} ${method}`
+			+ `\n      ${test.total} assertion${test.total===1?'':'s'}, `
+			+ `${test.good} Succeeded, ${failedAssertations} Failed.`
 			+ `\n      ${test.fail[test.ERROR]} Error${test.fail[test.ERROR]===1?'':'s'}`
 			+ `, ${test.fail[test.WARN]     } Warning${test.fail[test.WARN]===1?'':'s'}`
 			+ `, ${test.fail[test.NOTICE]   } Notice${test.fail[test.NOTICE]===1?'':'s'}`
@@ -355,27 +370,67 @@ export class Reporter extends (class{})
 
 	assertionFailed(errorMessage, level, test)
 	{
+		const trace = new Error().stack.split('\n').slice(2);
+
+		while(trace[0] && String(trace[0]).match(/^\s+at\s.+?.assert.+\(/))
+		{
+			trace.shift();
+		}
+
+		trace.unshift('');
+
 		const name = test.constructor.name;
 
-		this.testData.tests[name].methods[test.currentMethod].messages.push(errorMessage);
+		this.testData.tests[name].methods[test.currentMethod].alerts.push(errorMessage + trace.join('\n'));
 
-		let icon   = '💀';
+		let icon  = ' \u2716';
 		let color = this.ASSERT_FAIL;
 
 		if(level > 2)
 		{
-			icon = '☢ ';
+			icon  = ' \u2622';
 			color = this.ASSERT_WARN;
 		}
 		if(level > 3)
 		{
-			icon = '- ';
+			icon  = ' \uD83D\uDFB4';
 			color = this.ASSERT_NOTICE;
 		}
 
 		this.Print(
 			this.Format(`   ${icon} ${String(errorMessage).replace(/\n/g, "\n       ")}`, color)
+				+ (level < test.WARN ? trace.join('\n   ') : '')
 		);
+	}
+
+	annotate(message, test)
+	{
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].annotations.push(message);
+
+		const icon = '\uD83D\uDFCA';
+
+		if(typeof message === 'object')
+		{
+			message = JSON.stringify(message, null, 2);
+		}
+
+		this.Print(`    ${icon} ${String(message).replace(/\n/g, "\n      ")}`);
+	}
+
+	assertionFailedSilent(errorMessage, level, test)
+	{
+		const trace = new Error().stack.split('\n').slice(2);
+
+		while(trace[0] && String(trace[0]).match(/^\s+at\s.+?.assert.+\(/))
+		{
+			trace.shift();
+		}
+
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].alerts.push(errorMessage + trace.join('\n'));
 	}
 
 	exceptionCaught(exception, test)
@@ -384,10 +439,10 @@ export class Reporter extends (class{})
 
 		const name = test.constructor.name;
 
-		this.testData.tests[name].methods[test.currentMethod].messages.push(message);
+		this.testData.tests[name].methods[test.currentMethod].alerts.push(message);
 
 		this.Print(this.Format(
-			'   💀 ' + message.replace(/\n\s+/g, "\n        ").replace(/\n\b/g, "\n      ")
+			'    \u2716 ' + message.replace(/\n\s+/g, "\n       ").replace(/\n\b/g, "\n     ")
 			, this.EXCEPTION
 		));
 	}
@@ -398,7 +453,7 @@ export class Reporter extends (class{})
 
 		const name = test.constructor.name;
 
-		this.testData.tests[name].methods[test.currentMethod].messages.push(message);
+		this.testData.tests[name].methods[test.currentMethod].alerts.push(message);
 
 		if(rejection instanceof Error)
 		{
@@ -406,7 +461,7 @@ export class Reporter extends (class{})
 		}
 
 		this.Print(this.Format(
-			'   💀 ' + (message || '').replace(/\n/g, "\n      "), this.EXCEPTION)
+			'    \u2716 ' + (message || '').replace(/\n/g, "\n      "), this.EXCEPTION)
 		);
 	}
 
