@@ -335,7 +335,7 @@ export class Reporter extends (class{})
 			}
 
 			this.Print(this.Format(
-				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.\n`
+				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
 				, color
 			));
 			return;

@@ -240,7 +240,15 @@ export class Test
 			});
 		};
 
-		return runMethods(...testMethods).finally(() => reporter.testComplete(this));
+		if(this.parallel)
+		{
+			return Promise.all(testMethods.map(m => runMethods(m)))
+			.finally(() => reporter.testComplete(this));
+		}
+
+
+		return runMethods(...testMethods)
+		.finally(() => reporter.testComplete(this));
 	}
 
 	assertEquals(a, b, errorMessage, level = this.ERROR)
