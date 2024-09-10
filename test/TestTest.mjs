@@ -1,4 +1,4 @@
-import { Test } from '../Test.js';
+import { Test } from '../Test.mjs';
 
 export class TestTest extends Test
 {
@@ -36,6 +36,5 @@ export class TestTest extends Test
 
 	testEmpty()
 	{
-		
 	}
 }

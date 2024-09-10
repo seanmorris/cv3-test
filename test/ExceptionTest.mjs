@@ -1,11 +1,10 @@
-import { Test } from '../Test.js';
+import { Test } from '../Test.mjs';
 
 export class ExceptionTest extends Test
 {
 	testExpectedException()
 	{
 		this.expect(Error);
-
 		throw new Error('Expected error.');
 	}
 
@@ -13,16 +12,14 @@ export class ExceptionTest extends Test
 	{
 		this.expect(Error);
 
-		return new Promise((a,r)=>{
-
+		return new Promise((a,r) => {
 			throw new Error('Expected async error.');
-
 		});
 	}
 
 	testExpectedInlineException()
 	{
-		this.expect(Error, ()=>{
+		this.expect(Error, () => {
 			throw new Error('Expected error.');
 		});
 	}
@@ -30,13 +27,11 @@ export class ExceptionTest extends Test
 	testExpectedAsyncInlineException()
 	{
 		return new Promise((accept,reject)=>{
-
-			this.expect(Error, ()=>{
+			this.expect(Error, () => {
 				throw new Error('Expected error.');
 			});
 
 			accept();
-
 		});
 	}
 }

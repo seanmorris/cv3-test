@@ -1,4 +1,4 @@
-import { Test } from '../Test.js';
+import { Test } from '../Test.mjs';
 
 export class NoticeTest extends Test
 {

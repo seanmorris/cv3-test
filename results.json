@@ -1,0 +1,292 @@
+{
+	"totals": {
+		"total": 3,
+		"good": 0,
+		"bad": 3
+	},
+	"tests": {
+		"FailingExceptionTest": {
+			"total": 7,
+			"good": 4,
+			"failures": 5,
+			"fail": [
+				0,
+				2,
+				3,
+				0,
+				0
+			],
+			"methods": {
+				"testUnmetExceptionExpectation": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Unmet error expectation, Expected Error.\n    at file:///home/sean/projects/cv3/test/Test.mjs:205:11"
+					],
+					"annotations": []
+				},
+				"testUnmetExpectedAsyncException": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Unmet error expectation, Expected Error.\n    at file:///home/sean/projects/cv3/test/Test.mjs:205:11"
+					],
+					"annotations": []
+				},
+				"testUnmetInlineException": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Unmet error expectation, Expected Error.\n    at FailingExceptionTest.expect (file:///home/sean/projects/cv3/test/Test.mjs:131:9)\n    at FailingExceptionTest.testUnmetInlineException (file:///home/sean/projects/cv3/test/test-fail/FailingExceptionTest.mjs:21:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testUnmetAsyncInlineException": {
+					"total": 0,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"ReferenceError: XError is not defined\n    at file:///home/sean/projects/cv3/test/test-fail/FailingExceptionTest.mjs:27:16\n    at new Promise (<anonymous>)\n    at FailingExceptionTest.testUnmetAsyncInlineException (file:///home/sean/projects/cv3/test/test-fail/FailingExceptionTest.mjs:26:10)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testUnexpectedException": {
+					"total": 0,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Error: TESTING ERROR TESTING ERROR TESTING ERROR\n    at FailingExceptionTest.testUnexpectedException (file:///home/sean/projects/cv3/test/test-fail/FailingExceptionTest.mjs:34:9)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testExpectedException": {
+					"total": 1,
+					"good": 1,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testExpectedAsyncException": {
+					"total": 1,
+					"good": 1,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testExpectedInlineException": {
+					"total": 1,
+					"good": 1,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testExpectedAsyncInlineException": {
+					"total": 1,
+					"good": 1,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				}
+			},
+			"totalMethods": 9,
+			"goodMethods": 4,
+			"failureMethods": 5,
+			"rank": 3
+		},
+		"FailingPromiseTest": {
+			"total": 15,
+			"good": 6,
+			"failures": 12,
+			"fail": [
+				3,
+				0,
+				9,
+				0,
+				0
+			],
+			"methods": {
+				"testGoodPromise": {
+					"total": 3,
+					"good": 3,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testBadPromise": {
+					"total": 3,
+					"good": 0,
+					"failures": 4,
+					"alerts": [
+						"0 is not equal to 1!\n    at file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:26:9\n    at new Promise (<anonymous>)\n    at FailingPromiseTest.testBadPromise (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:24:10)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:29:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:30:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						"Rejection message here!"
+					],
+					"annotations": []
+				},
+				"testBadEmptyPromise": {
+					"total": 3,
+					"good": 0,
+					"failures": 4,
+					"alerts": [
+						"0 is not equal to 1!\n    at file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:41:9\n    at new Promise (<anonymous>)\n    at FailingPromiseTest.testBadEmptyPromise (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:39:10)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:44:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:45:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						null
+					],
+					"annotations": []
+				},
+				"testAnotherBadPromise": {
+					"total": 3,
+					"good": 0,
+					"failures": 4,
+					"alerts": [
+						"0 is not equal to 1!\n    at file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:56:9\n    at new Promise (<anonymous>)\n    at FailingPromiseTest.testAnotherBadPromise (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:54:10)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:59:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						"0 is not equal to 1!\n    at Timeout._onTimeout (file:///home/sean/projects/cv3/test/test-fail/FailingPromiseTest.mjs:60:10)\n    at listOnTimeout (node:internal/timers:569:17)\n    at process.processTimers (node:internal/timers:512:7)",
+						"#######################\nMultiline Rejection\nmessage here!\n#######################"
+					],
+					"annotations": []
+				}
+			},
+			"totalMethods": 5,
+			"goodMethods": 2,
+			"failureMethods": 3,
+			"rank": 3
+		},
+		"FailingTestTest": {
+			"total": 13,
+			"good": 4,
+			"failures": 7,
+			"fail": [
+				0,
+				2,
+				2,
+				3,
+				4
+			],
+			"methods": {
+				"testSuccess": {
+					"total": 1,
+					"good": 1,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testFailure": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testFailure (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:12:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testWarning": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testWarning (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:17:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testNotice": {
+					"total": 1,
+					"good": 0,
+					"failures": 0,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testNotice (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:22:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testMultilineAssertion": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Random assertion with\nmultiple lines!\n    at FailingTestTest.testMultilineAssertion (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:27:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testException": {
+					"total": 0,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Error: Random exception!\n    at FailingTestTest.testException (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:32:9)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testMultilineException": {
+					"total": 0,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"Error: Random exception with\nmultiple lines!\n    at FailingTestTest.testMultilineException (file:///home/sean/projects/cv3/test/test-fail/FailingTestTest.mjs:37:9)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testEmpty": {
+					"total": 0,
+					"good": 0,
+					"failures": 0,
+					"alerts": [],
+					"annotations": []
+				},
+				"testWarningOnly": {
+					"total": 1,
+					"good": 0,
+					"failures": 1,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testWarningOnly (file:///home/sean/projects/cv3/test/test/TestTest.mjs:12:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testWarningAndSuccess": {
+					"total": 2,
+					"good": 1,
+					"failures": 1,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testWarningAndSuccess (file:///home/sean/projects/cv3/test/test/TestTest.mjs:18:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testNoticeOnly": {
+					"total": 1,
+					"good": 0,
+					"failures": 0,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testNoticeOnly (file:///home/sean/projects/cv3/test/test/TestTest.mjs:23:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testNoticeAndSuccess": {
+					"total": 2,
+					"good": 1,
+					"failures": 0,
+					"alerts": [
+						"0 is not equal to 1!\n    at FailingTestTest.testNoticeAndSuccess (file:///home/sean/projects/cv3/test/test/TestTest.mjs:29:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				},
+				"testMultilineAssertation": {
+					"total": 1,
+					"good": 0,
+					"failures": 0,
+					"alerts": [
+						"Random assertion with\nmultiple lines!\n    at FailingTestTest.testMultilineAssertation (file:///home/sean/projects/cv3/test/test/TestTest.mjs:34:8)\n    at file:///home/sean/projects/cv3/test/Test.mjs:193:30"
+					],
+					"annotations": []
+				}
+			},
+			"totalMethods": 15,
+			"goodMethods": 3,
+			"failureMethods": 11,
+			"rank": 3
+		}
+	}
+}

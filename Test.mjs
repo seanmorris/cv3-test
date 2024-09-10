@@ -1,4 +1,4 @@
-import { Reporter } from './Reporter';
+import { Reporter } from './Reporter.mjs';
 
 const recurse = Symbol('recurse');
 
@@ -189,14 +189,11 @@ export class Test
 			reporter.methodStarted(test, method);
 
 			return setUp.then(() => {
-
 				let result = test[method]();
-
 				if(!(result instanceof Promise))
 				{
 					result = Promise.resolve(result);
 				}
-
 				return result;
 			})
 			.then(() => {
@@ -220,7 +217,7 @@ export class Test
 				}
 				else
 				{
-					const stringError = (error.toString && String(error) !== '[object Object]')
+					const stringError = (error && error.toString && String(error) !== '[object Object]')
 						? String(error)
 						: JSON.stringify(error);
 
@@ -229,13 +226,9 @@ export class Test
 				}
 			})
 			.finally(() => {
-
 				test.breakDown();
-
 				reporter.methodComplete(test, method);
-
 				test.currentMethod = null;
-
 				return runMethods(...methods);
 			});
 		};
@@ -245,7 +238,6 @@ export class Test
 			return Promise.all(testMethods.map(m => runMethods(m)))
 			.finally(() => reporter.testComplete(this));
 		}
-
 
 		return runMethods(...testMethods)
 		.finally(() => reporter.testComplete(this));

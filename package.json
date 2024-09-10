@@ -1,34 +1,27 @@
 {
 	"name": "cv3-test",
-	"version": "0.0.17-a",
+	"version": "0.1.0",
 	"description": "Testing code.",
 	"author": "Sean Morris",
 	"license": "Apache-2.0",
 	"preferglobal": true,
 	"files": [
-		"/*.js",
-		"bin/*.js"
+		"bin/cvtest.mjs",
+		"Reporter.mjs",
+		"Test.mjs",
+		"index.mjs"
 	],
-	"main": "test.js",
-	"directories": {
-		"test": "test",
-		"test-fail": "test-fail"
-	},
+
+	"main": "index.mjs",
 	"scripts": {
-		"build": "make",
 		"test": "make test",
-		"test-fail": "npx babel source test test-fail --out-dir ."
+		"test-fail": "make test-fail"
 	},
 	"bin": {
-		"cvtest": "./bin/cvtest.js"
+		"cvtest": "./bin/cvtest.mjs"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/seanmorris/cv3-test"
-	},
-	"devDependencies": {
-		"@babel/cli": "^7.8.4",
-		"@babel/core": "^7.8.7",
-		"@babel/preset-env": "^7.0.0"
 	}
 }

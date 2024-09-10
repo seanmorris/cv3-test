@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import { dirname } from 'node:path';
+
 export class Reporter extends (class{})
 {
 	constructor(args)
@@ -123,7 +126,8 @@ export class Reporter extends (class{})
 
 	suiteStarted()
 	{
-		const packageInfo = require('./package.json');
+		const packageJson = `${dirname(import.meta.url).substr(7)}/package.json`;
+		const packageInfo = JSON.parse(fs.readFileSync(packageJson));
 
 		this.box(47
 			, `Curvature 3 Testing Framework ${packageInfo.version}`
@@ -438,6 +442,11 @@ export class Reporter extends (class{})
 		const message = String(exception.stack || exception);
 
 		const name = test.constructor.name;
+
+		console.error(name);
+		console.error(name);
+		console.error(name);
+		console.error(name, this.testData.tests);
 
 		this.testData.tests[name].methods[test.currentMethod].alerts.push(message);
 

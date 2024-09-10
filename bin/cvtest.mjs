@@ -2,9 +2,10 @@
 
 const [bin, script, ...args] = process.argv;
 
-const Test = require("../Test").Test;
-const path = require("path");
-const fsp  = require("fs").promises;
+import { Test } from "../Test.mjs"
+import path from "path";
+import fs from 'node:fs';
+const fsp = fs.promises;
 
 const getTestList = !args.length
 	? fsp.readdir(process.cwd())

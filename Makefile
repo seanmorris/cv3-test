@@ -1,13 +1,10 @@
-.PHONY: build test test-fail clean reconfigure
-
-build:
-	@ npx babel source --out-dir . \
+.PHONY: test test-fail clean
 
 test:
-	@ npx babel test/*Test.mjs --out-dir test-cjs \
+	@ node test/test.mjs > test/results.json
 
 test-fail:
-	@ npx babel test-fail/*Test.mjs --out-dir test-cjs-fail \
+	@ node test-fail/test.mjs > test-fail/results.json
 
 dependencies:
 	@ npm install -s
@@ -15,5 +12,3 @@ dependencies:
 update-dependencies:
 	@ npm update -s
 
-clean:
-	@ rm -rf *.js test-cjs test-cjs-fail
