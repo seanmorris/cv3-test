@@ -1,11 +1,14 @@
 {
 	"name": "cv3-test",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Testing code.",
 	"author": "Sean Morris",
 	"license": "Apache-2.0",
 	"preferglobal": true,
 	"files": [
+		"LICENSE",
+		"NOTICE",
+		"README.md",
 		"bin/cvtest.mjs",
 		"Reporter.mjs",
 		"Test.mjs",

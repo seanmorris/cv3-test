@@ -443,11 +443,6 @@ export class Reporter extends (class{})
 
 		const name = test.constructor.name;
 
-		console.error(name);
-		console.error(name);
-		console.error(name);
-		console.error(name, this.testData.tests);
-
 		this.testData.tests[name].methods[test.currentMethod].alerts.push(message);
 
 		this.Print(this.Format(
