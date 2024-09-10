@@ -179,7 +179,7 @@ export class Reporter extends (class{})
 
 		if(process !== undefined)
 		{
-			process.exitCode = !!badTests.length;
+			process.exitCode = Number(!!badTests.length);
 		}
 
 		this.Print(`----------- ☯  Testing completed ☯  -----------`);
