@@ -1,6 +1,3 @@
-import fs from 'node:fs';
-import { dirname } from 'node:path';
-
 export class Reporter extends (class{})
 {
 	constructor(args)
@@ -126,16 +123,13 @@ export class Reporter extends (class{})
 
 	suiteStarted()
 	{
-		const packageJson = `${dirname(import.meta.url).substr(7)}/package.json`;
-		const packageInfo = JSON.parse(fs.readFileSync(packageJson));
-
 		this.box(47
-			, `Curvature 3 Testing Framework ${packageInfo.version}`
-			, `© 2019-2023 Sean Morris`
+			, `Curvature 3 Testing Framework`
+			, `© 2019-2024 Sean Morris`
 			, ``
-			, `https://www.npmjs.com/package/cv3-test`
+			, `seanmorris/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
-			, `seanmorris/${packageInfo.name}:${packageInfo.version}`
+			, `https://www.npmjs.com/package/cv3-test`
 		);
 
 		this.Print(`------------- ☯  Starting test ☯  -------------\n`);

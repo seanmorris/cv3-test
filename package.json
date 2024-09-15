@@ -1,6 +1,6 @@
 {
 	"name": "cv3-test",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Testing code.",
 	"author": "Sean Morris",
 	"license": "Apache-2.0",
@@ -12,19 +12,19 @@
 		"bin/cvtest.mjs",
 		"Reporter.mjs",
 		"Test.mjs",
+		"Snapshot.mjs",
 		"index.mjs"
 	],
-
 	"main": "index.mjs",
 	"scripts": {
 		"test": "make test",
 		"test-fail": "make test-fail"
 	},
 	"bin": {
-		"cvtest": "./bin/cvtest.mjs"
+		"cvtest": "bin/cvtest.mjs"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/seanmorris/cv3-test"
+		"url": "git+https://github.com/seanmorris/cv3-test.git"
 	}
 }

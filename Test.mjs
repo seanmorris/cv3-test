@@ -154,7 +154,7 @@ export class Test
 		return Promise.resolve();
 	}
 
-	run(reporter)
+	async run(reporter)
 	{
 		const testMethods = [];
 		const constructor = this.constructor;
@@ -172,7 +172,7 @@ export class Test
 
 		reporter.testStarted(this);
 
-		const runMethods = (...methods) => {
+		const runMethods = async (...methods) => {
 
 			if(!methods.length)
 			{
@@ -182,27 +182,23 @@ export class Test
 			const test = new constructor({reporter});
 
 			const method = methods.shift();
-			const setUp  = test.setUp();
-
 			test.currentMethod = method;
+
+			await test.setUp();
 
 			reporter.methodStarted(test, method);
 
-			return setUp.then(() => {
-				let result = test[method]();
-				if(!(result instanceof Promise))
-				{
-					result = Promise.resolve(result);
-				}
-				return result;
-			})
-			.then(() => {
+			try
+			{
+				await test[method]();
+
 				if(test.expected)
 				{
 					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
 				}
-			})
-			.catch(error => {
+			}
+			catch(error)
+			{
 				if(error instanceof Error)
 				{
 					if(test.expected && error instanceof test.expected)
@@ -224,13 +220,15 @@ export class Test
 					reporter.promiseRejected(stringError, test);
 					test.fail[test.REJECTION]++;
 				}
-			})
-			.finally(() => {
-				test.breakDown();
+			}
+			finally
+			{
+				await test.breakDown();
 				reporter.methodComplete(test, method);
 				test.currentMethod = null;
+
 				return runMethods(...methods);
-			});
+			}
 		};
 
 		if(this.parallel)
