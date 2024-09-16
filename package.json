@@ -1,6 +1,6 @@
 {
 	"name": "cv3-test",
-	"version": "0.1.2",
+	"version": "0.1.4",
 	"description": "Testing code.",
 	"author": "Sean Morris",
 	"license": "Apache-2.0",
@@ -26,5 +26,8 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/seanmorris/cv3-test.git"
+	},
+	"optionalDependencies": {
+		"pobot": "^0.1.4"
 	}
 }

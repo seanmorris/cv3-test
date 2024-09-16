@@ -4,7 +4,9 @@ const recurse = Symbol('recurse');
 
 export class Test
 {
-	static run(...tests)
+	parallel = Boolean(Number(process.env.TEST_PARALLEL ?? 1));
+
+	static async run(...tests)
 	{
 		this.failureIsExpected = false;
 		this.currentMethod = null;
@@ -14,10 +16,22 @@ export class Test
 
 		this.reporter.suiteStarted();
 
+		if(Boolean(Number(process.env.TEST_ALL_PARALLEL ?? 0)))
+		{
+			const testResults = [];
+			for(const testClass of tests)
+			{
+				const test = new testClass({reporter: this.reporter});
+				testResults.push(test.run(this.reporter))
+			}
+
+			return Promise.all(testResults).finally(() => this.reporter.suiteComplete());
+		}
+
 		return this[recurse](...tests).finally(() => this.reporter.suiteComplete());
 	}
 
-	static [recurse](...tests)
+	static async [recurse](...tests)
 	{
 		if(!tests.length)
 		{
@@ -25,15 +39,16 @@ export class Test
 		}
 
 		const testClass = tests.shift();
-		const test      = new testClass({reporter: this.reporter});
-		let testResult  = test.run(this.reporter);
+		const test = new testClass({reporter: this.reporter});
 
-		if(!testResult)
+		try
 		{
-			testResult = Promise.resolve(testResult);
+			await test.run(this.reporter);
 		}
-
-		return testResult.finally(() => { return this[recurse](...tests) });
+		finally
+		{
+			return this[recurse](...tests);
+		}
 	}
 
 	constructor(args = {})
@@ -159,9 +174,9 @@ export class Test
 		const testMethods = [];
 		const constructor = this.constructor;
 
-		for(let object = Object.getPrototypeOf(this)
-			;   object != null
-			;   object = Object.getPrototypeOf(object)
+		for(let object = this
+			; object != null
+			; object = Object.getPrototypeOf(object)
 		){
 			testMethods.push(...Object.getOwnPropertyNames(object).filter((property) => {
 				return object[property] instanceof Function
@@ -173,7 +188,6 @@ export class Test
 		reporter.testStarted(this);
 
 		const runMethods = async (...methods) => {
-
 			if(!methods.length)
 			{
 				return Promise.resolve();
@@ -233,12 +247,10 @@ export class Test
 
 		if(this.parallel)
 		{
-			return Promise.all(testMethods.map(m => runMethods(m)))
-			.finally(() => reporter.testComplete(this));
+			return Promise.all(testMethods.map(m => runMethods(m))).finally(() => reporter.testComplete(this));
 		}
 
-		return runMethods(...testMethods)
-		.finally(() => reporter.testComplete(this));
+		return runMethods(...testMethods).finally(() => reporter.testComplete(this));
 	}
 
 	assertEquals(a, b, errorMessage, level = this.ERROR)

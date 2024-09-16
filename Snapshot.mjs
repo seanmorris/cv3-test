@@ -56,12 +56,17 @@ export const compareSnapshot = (value, matchers) => {
 
 	const _value = typeof value === 'object' ? {...value} : value;
 
+	compareDeep(_value, matchers);
+
 	const { file: testFilename, function: testMethod } = getCaller(2);
 	const index = testFilename + '#' + testMethod;
 	const count = indexes.get(index) ?? 0;
 
+
 	const filename = path.dirname(testFilename) + '/' + testMethod + '_' + count + '.json';
 	const json = JSON.stringify(_value, null, 4);
+
+	console.error(filename);
 
 	indexes.set(index, 1 + count);
 
@@ -71,5 +76,5 @@ export const compareSnapshot = (value, matchers) => {
 		return true;
 	}
 
-	return json === fs.readFileSync(filename, {encoding: 'utf8'});
+	return json == fs.readFileSync(filename, {encoding: 'utf8'});
 };

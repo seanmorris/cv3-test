@@ -178,7 +178,7 @@ export class Reporter extends (class{})
 
 		this.Print(`----------- ☯  Testing completed ☯  -----------`);
 
-		process.stdout.write(JSON.stringify(this.testData, null, '\t'));
+		process.stdout.write(JSON.stringify(this.testData, null, '\t') + '\n');
 	}
 
 	testStarted(test)
@@ -333,7 +333,7 @@ export class Reporter extends (class{})
 			}
 
 			this.Print(this.Format(
-				`   ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
+				` ${icon} ${test.good}/${test.total} successful assertion${test.good===1?'':'s'} in ${method}.`
 				, color
 			));
 			return;
@@ -440,7 +440,7 @@ export class Reporter extends (class{})
 		this.testData.tests[name].methods[test.currentMethod].alerts.push(message);
 
 		this.Print(this.Format(
-			'    \u2716 ' + message.replace(/\n\s+/g, "\n       ").replace(/\n\b/g, "\n     ")
+			'  \u2716 ' + message.replace(/\n\s+/g, "\n       ").replace(/\n\b/g, "\n     ")
 			, this.EXCEPTION
 		));
 	}
@@ -459,7 +459,7 @@ export class Reporter extends (class{})
 		}
 
 		this.Print(this.Format(
-			'    \u2716 ' + (message || '').replace(/\n/g, "\n      "), this.EXCEPTION)
+			'  \u2716 ' + (message || '').replace(/\n/g, "\n      "), this.EXCEPTION)
 		);
 	}
 
