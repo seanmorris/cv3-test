@@ -198,9 +198,9 @@ export class Test
 			const method = methods.shift();
 			test.currentMethod = method;
 
-			await test.setUp();
-
 			reporter.methodStarted(test, method);
+			
+			await test.setUp();
 
 			try
 			{

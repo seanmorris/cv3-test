@@ -22,7 +22,7 @@ export class BotTest extends Test
 	startDocument = `about:blank`;
 
 	width = 640;
-	height = 960;
+	height = 480;
 
 	options = [];
 
@@ -80,7 +80,6 @@ export class BotTest extends Test
 		const addBindings = helpers.filter(h => h.bindings).map(h => pobot.addBindings(h.bindings));
 
 		const printConsole = (event, icon, color) => {
-
 			const stars = {
 				warning:  this.reporter.Format('\u2622', this.reporter.METHOD_WARN)
 				, error:  this.reporter.Format('\u2BBF', this.reporter.METHOD_FAIL)
@@ -98,12 +97,7 @@ export class BotTest extends Test
 
 				const line = String((mapped.length === 1 && typeof mapped[0] !== 'object') ? mapped[0] : mapped.map(JSON.stringify).join(', '));
 
-				if(event.type === 'error')
-				{
-					this.assertSilent(false, line);
-				}
-
-				if(event.type === 'warning')
+				if(event.type === 'error' || event.type === 'warning')
 				{
 					this.assertSilent(false, line, this.WARN);
 				}
