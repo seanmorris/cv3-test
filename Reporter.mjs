@@ -124,7 +124,7 @@ export class Reporter extends (class{})
 	{
 		this.box(47
 			, `Curvature 3 Testing Framework`
-			, `© 2019-2024 Sean Morris`
+			, `© 2019-2025 Sean Morris`
 			, ``
 			, `seanmorris/cv3-test`
 			, `https://github.com/seanmorris/cv3-test`
@@ -206,10 +206,10 @@ export class Reporter extends (class{})
 		const fail      = this.testData.tests[name].fail  || [];
 		const failedAssertations = this.filterFails(fail, [test.REJECTION, test.EXCEPTION, test.NOTICE]).reduce((a,b)=>a+b,0);
 
-		const hardFails = this.filterFails(fail, [test.NOTICE]).reduce((a,b)=>a+b,0);
+		const hardFails = this.filterFails(fail, [test.NOTICE, test.WARN]).reduce((a,b)=>a+b,0);
 		const total     = this.testData.tests[name].total || 0;
 		const good      = this.testData.tests[name].good  || 0;
-		const failures  = this.testData.tests[name].failures || 0;;
+		const failures  = this.testData.tests[name].failures || 0;
 
 		const totalMethods = this.testData.tests[name].totalMethods || 0;
 		const goodMethods  = this.testData.tests[name].goodMethods  || 0;
@@ -288,7 +288,7 @@ export class Reporter extends (class{})
 			test.REJECTION, test.EXCEPTION, test.NOTICE
 		]).reduce((a,b)=>a+b,0);
 
-		const hardFails = this.filterFails(test.fail, [test.NOTICE]).reduce((a,b)=>a+b,0);
+		const hardFails = this.filterFails(test.fail, [test.NOTICE, test.WARN]).reduce((a,b)=>a+b,0);
 
 		const failures = test.fail.reduce((a,b)=>a+b,0);
 
@@ -417,6 +417,20 @@ export class Reporter extends (class{})
 	}
 
 	assertionFailedSilent(errorMessage, level, test)
+	{
+		const trace = new Error().stack.split('\n').slice(2);
+
+		while(trace[0] && String(trace[0]).match(/^\s+at\s.+?.assert.+\(/))
+		{
+			trace.shift();
+		}
+
+		const name = test.constructor.name;
+
+		this.testData.tests[name].methods[test.currentMethod].alerts.push(errorMessage + trace.join('\n'));
+	}
+
+	alertTriggered(errorMessage, level, test)
 	{
 		const trace = new Error().stack.split('\n').slice(2);
 

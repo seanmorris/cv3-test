@@ -62,16 +62,14 @@ export const compareSnapshot = (value, matchers) => {
 	const index = testFilename + '#' + testMethod;
 	const count = indexes.get(index) ?? 0;
 
-
 	const filename = path.dirname(testFilename) + '/' + testMethod + '_' + count + '.json';
 	const json = JSON.stringify(_value, null, 4);
-
-	console.error(filename);
 
 	indexes.set(index, 1 + count);
 
 	if(process.env.CV_UPDATE_SNAPSHOTS || !fs.existsSync(filename))
 	{
+		console.error('Writing: ' + filename);
 		fs.writeFileSync(filename, json, {encoding: 'utf8'});
 		return true;
 	}

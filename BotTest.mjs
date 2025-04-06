@@ -99,7 +99,11 @@ export class BotTest extends Test
 
 				if(event.type === 'error' || event.type === 'warning')
 				{
-					this.assertSilent(false, line, this.WARN);
+					this.reporter.alertTriggered(line, this.WARN, this);
+				}
+				else
+				{
+					this.reporter.alertTriggered(line, this.NOTICE, this);
 				}
 
 				let position;
