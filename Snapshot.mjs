@@ -63,16 +63,36 @@ export const compareSnapshot = (value, matchers) => {
 	const count = indexes.get(index) ?? 0;
 
 	const filename = path.dirname(testFilename) + '/' + testMethod + '_' + count + '.json';
-	const json = JSON.stringify(_value, null, 4);
+	const actual = JSON.stringify(_value, null, 4);
 
 	indexes.set(index, 1 + count);
 
 	if(process.env.CV_UPDATE_SNAPSHOTS || !fs.existsSync(filename))
 	{
 		console.error('Writing: ' + filename);
-		fs.writeFileSync(filename, json, {encoding: 'utf8'});
+		fs.writeFileSync(filename, actual, {encoding: 'utf8'});
 		return true;
 	}
 
-	return json == fs.readFileSync(filename, {encoding: 'utf8'});
+	const expected = fs.readFileSync(filename, {encoding: 'utf8'});
+
+	if(actual === expected)
+	{
+		return true;
+	}
+	else
+	{
+		if(true||process.env.CV_DEBUG)
+		{
+			console.error(`    \x1b[33m== Snapshot error in: ${testMethod} ==\x1b[0m
+    \x1b[32m-- actual:\x1b[0m
+    ${actual}
+    \x1b[31m-- expected:\x1b[0m
+    ${expected}
+    \x1b[33m== ==\x1b[0m
+`);
+		}
+
+		return false;
+	}
 };
