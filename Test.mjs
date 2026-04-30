@@ -194,25 +194,7 @@ export class Test
 			}
 
 			const test = new constructor({reporter});
-
-			const method = methods.shift();
-			test.currentMethod = method;
-
-			reporter.methodStarted(test, method);
-			
-			await test.setUp();
-
-			try
-			{
-				await test[method]();
-
-				if(test.expected)
-				{
-					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
-				}
-			}
-			catch(error)
-			{
+			const handleError = error => {
 				if(error instanceof Error)
 				{
 					if(test.expected && error instanceof test.expected)
@@ -234,10 +216,39 @@ export class Test
 					reporter.promiseRejected(stringError, test);
 					test.fail[test.REJECTION]++;
 				}
+			};
+
+			const method = methods.shift();
+			test.currentMethod = method;
+
+			reporter.methodStarted(test, method);
+
+			try
+			{
+				await test.setUp();
+
+				await test[method]();
+
+				if(test.expected)
+				{
+					test.assert(false, `Unmet error expectation, Expected ${test.expected.name}.`);
+				}
+			}
+			catch(error)
+			{
+				handleError(error);
 			}
 			finally
 			{
-				await test.breakDown();
+				try
+				{
+					await test.breakDown();
+				}
+				catch(error)
+				{
+					handleError(error);
+				}
+
 				reporter.methodComplete(test, method);
 				test.currentMethod = null;
 
